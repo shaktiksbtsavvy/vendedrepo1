@@ -1,0 +1,153 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'AvailableToPromise API
+
+  '
+Globals:
+  Function:
+    Timeout: 20
+Parameters:
+  StageName:
+    Description: stage / alias name to be used in this deploy
+    Type: String
+    AllowedValues:
+    - Prod
+    - UAT
+    - Dev
+    Default: Dev
+Conditions:
+  CreatePRODResources:
+    Fn::Equals:
+    - Ref: StageName
+    - Prod
+  CreateUATResources:
+    Fn::Equals:
+    - Ref: StageName
+    - UAT
+  CreateDevResources:
+    Fn::Equals:
+    - Ref: StageName
+    - Dev
+  CreateEastResources:
+    Fn::Equals:
+    - Ref: AWS::Region
+    - us-east-1
+  CreateWestResources:
+    Fn::Equals:
+    - Ref: AWS::Region
+    - us-west-1
+Mappings:
+  EnvMap:
+    Dev:
+      DAXENDPOINT: daxs://dax-api-cluster-dev.x2sy7j.dax-clusters.us-east-1.amazonaws.com
+      FUNMEMORYSIZE: 10240
+      INVENTORYFUN: InventoryApi-Dev
+      DDFUN: DeliveryDateApi-Dev
+      LOCATIONTABLE: TST_CONNS_LOCATION
+      POLICYDAXRESOURCE: arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-dev
+      POLICYDDBRESOURCE:
+      - arn:aws:dynamodb:us-east-1:203315843709:table/TST_CONNS_LOCATION
+    UAT:
+      DAXENDPOINT: daxs://dax-api-cluster-uat.x2sy7j.dax-clusters.us-east-1.amazonaws.com
+      FUNMEMORYSIZE: 10240
+      INVENTORYFUN: InventoryApi-UAT
+      DDFUN: DeliveryDateApi-UAT
+      LOCATIONTABLE: UAT_CONNS_LOCATION
+      POLICYDAXRESOURCE: arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-uat
+      POLICYDDBRESOURCE:
+      - arn:aws:dynamodb:us-east-1:203315843709:table/UAT_CONNS_LOCATION
+    Prod:
+      FUNMEMORYSIZE: 10240
+      INVENTORYFUN: InventoryApi-Dev
+      DDFUN: DeliveryDateApi-Dev
+Resources:
+  AvailableToPromiseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Join:
+        - '-'
+        - - AvailableToPromiseApi
+          - Ref: StageName
+      Description: AvailableToPromise API function East Region.
+      CodeUri: AvailableToPromiseFunction
+      Handler: com.conns.lambda.api.atp.AvailableToPromiseHandler::handleRequest
+      Runtime: java11
+      PackageType: Zip
+      VpcConfig:
+        SecurityGroupIds:
+          Fn::If:
+          - CreateEastResources
+          - - sg-08b41ec1af2f1a000
+          - - sg-0e0ce71dd334a2251
+        SubnetIds:
+          Fn::If:
+          - CreateEastResources
+          - - subnet-09b75b10749852dca
+            - subnet-09eb2858dd51a7a65
+            - subnet-0548df04e14dea60d
+          - - subnet-039b1a40fc66260b3
+            - subnet-0a90d1ee750bfa736
+      Policies:
+      - Statement:
+        - Sid: DAXLambdaAccessPolicy
+          Effect: Allow
+          Action:
+          - dax:*
+          Resource:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - POLICYDAXRESOURCE
+        - Sid: DYDBAccessPolicy
+          Effect: Allow
+          Action:
+          - dynamodb:*
+          Resource:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - POLICYDDBRESOURCE
+      - LambdaInvokePolicy:
+          FunctionName:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - INVENTORYFUN
+      - LambdaInvokePolicy:
+          FunctionName:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - DDFUN
+      MemorySize:
+        Fn::FindInMap:
+        - EnvMap
+        - Ref: StageName
+        - FUNMEMORYSIZE
+      Environment:
+        Variables:
+          VERSION: 1.0
+          RESTART: 1.0
+          LOG_LEVEL: DEBUG
+          DISTANCETHRESHOLD: 125
+          INVENTORYFUN:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - INVENTORYFUN
+          DDFUN:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - DDFUN
+          DAXENDPOINT:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - DAXENDPOINT
+          LOCATIONTABLE:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - LOCATIONTABLE

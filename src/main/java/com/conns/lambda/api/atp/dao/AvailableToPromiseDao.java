@@ -178,26 +178,11 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 			this.longitude = longitude;
 			this.latitude = latitude;
 			this.type = type;
-			this.locationNumber = locationNumber;
+			this.locationNumber = String.format("%1$" + 3 + "s", locationNumber).replace(' ', '0'); ;
 			this.pickup = pickup;
 			this.zip = zip;
 		}
 
-		/**
-		 * @param longitude
-		 * @param latitude
-		 * @param type
-		 * @param locationNumber
-		 * @param pickup
-		 */
-		public LocationMaster(Double longitude, Double latitude, String type, String locationNumber, Double pickup) {
-			super();
-			this.longitude = longitude;
-			this.latitude = latitude;
-			this.type = type;
-			this.locationNumber = locationNumber;
-			this.pickup = pickup;
-		}
 
 		/**
 		 * 

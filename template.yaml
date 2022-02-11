@@ -41,9 +41,9 @@ Mappings:
       POLICYDAXRESOURCE: "arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev"
       POLICYDDBRESOURCE: ["arn:aws:dynamodb:us-west-1:203315843709:table/TST_CONNS_LOCATION"]
     UAT: 
-      DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com #daxs://inventorytestcluster.yprieo.dax-clusters.us-west-1.amazonaws.com  
-      POLICYDAXRESOURCE: "arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev"
-      POLICYDDBRESOURCE: ["arn:aws:dynamodb:us-west-1:203315843709:table/TST_CONNS_LOCATION"]
+      DAXENDPOINT: daxs://dax-api-cluster-uat.8hlusu.dax-clusters.us-west-1.amazonaws.com #daxs://inventorytestcluster.yprieo.dax-clusters.us-west-1.amazonaws.com  
+      POLICYDAXRESOURCE: "arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-uat"
+      POLICYDDBRESOURCE: ["arn:aws:dynamodb:us-west-1:203315843709:table/UAT_CONNS_LOCATION"]
     Prod: 
       DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com #daxs://inventorytestcluster.yprieo.dax-clusters.us-west-1.amazonaws.com  
       POLICYDAXRESOURCE: "arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev"

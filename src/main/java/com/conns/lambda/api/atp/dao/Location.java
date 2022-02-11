@@ -9,18 +9,22 @@ public  class Location implements Comparable<Location>{
 	 * @param type
 	 * @param locationNumber
 	 * @param distance
+	 * @param zip
 	 */
-	public Location(Double longitude, Double latitude, String type, String locationNumber, Double distance) {
+	public Location(Double longitude, Double latitude, String type, String locationNumber, Double distance,
+			String zip) {
 		super();
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.type = type;
 		this.locationNumber = locationNumber;
 		this.distance = distance;
+		this.zip = zip;
 	}
+
 	
 	public Location(LocationMaster lm, Double distance) {
-		this(lm.getLatitude(), lm.getLongitude(), lm.getType(),lm.getLocationNumber(), distance);
+		this(lm.getLatitude(), lm.getLongitude(), lm.getType(),lm.getLocationNumber(), distance, lm.getZip());
 	}
 	
 	/**
@@ -36,6 +40,7 @@ public  class Location implements Comparable<Location>{
 	private String type;
 	private String locationNumber;
 	private Double distance;
+	private String zip;
 	
 	public Double getLongitude() {
 		return longitude;
@@ -79,5 +84,13 @@ public  class Location implements Comparable<Location>{
 	}
 	public void setDistance(Double distance) {
 		this.distance = distance;
+	}
+
+	public String getZip() {
+		return zip;
+	}
+
+	public void setZip(String zip) {
+		this.zip = zip;
 	}
 }

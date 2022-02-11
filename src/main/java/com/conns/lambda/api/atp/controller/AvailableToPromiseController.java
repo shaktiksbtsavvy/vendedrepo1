@@ -169,7 +169,7 @@ public class AvailableToPromiseController extends RequestController {
 		DeliveryDateRequest ddRequest = new DeliveryDateRequest();
 		ddRequest.setReqID(atpRequest.getReqID());
 		ddRequest.setDL_Location(locationDTO.getDLLocation());
-		ddRequest.setZipcode(atpRequest.getZip());
+		ddRequest.setZipcode(locationDTO.getDLZip()); ///Request zip or location Zip
 		ddRequest.setSKU(atpRequest.getProducts());
 		DeliveryDateResponse ddRes;
 		try {

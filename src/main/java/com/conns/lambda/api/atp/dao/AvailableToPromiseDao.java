@@ -1,18 +1,14 @@
 package com.conns.lambda.api.atp.dao;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
-import com.amazonaws.services.lambda.model.InvokeRequest;
-import com.amazonaws.services.lambda.model.InvokeResult;
 import com.conns.lambda.api.atp.model.Inventory.InventoryAvailableRequest;
 import com.conns.lambda.api.atp.model.Inventory.InventoryAvailableResponse;
 import com.conns.lambda.api.atp.model.dd.DeliveryDateRequest;
@@ -38,6 +34,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	private static final String _TYPE = "type";
 	private static final String _LOCATIONNUMBER = "number";
 	private static final String _PICKUP = "pickup";
+	private static final String _ZIP = "zip";
 	
 	private static final String _LOCATIONTABLE = "LOCATIONTABLE";
 	private static final Logger logger = LogManager.getLogger(AvailableToPromiseDao.class);
@@ -114,7 +111,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 			 if(records != null) {
 		         while (records.hasNext()) {
 		             Item item = records.next();
-		             locations.add(new LocationMaster(item.getDouble(_LONGITUDE),item.getDouble(_LATITUDE), item.getString(_TYPE),item.getString(_LOCATIONNUMBER), item.getDouble(_PICKUP)));
+		             locations.add(new LocationMaster(item.getDouble(_LONGITUDE),item.getDouble(_LATITUDE), item.getString(_TYPE),item.getString(_LOCATIONNUMBER), item.getDouble(_PICKUP), item.getString(_ZIP)));
 		         }
 			 }
 		}
@@ -173,6 +170,25 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		 * @param type
 		 * @param locationNumber
 		 * @param pickup
+		 * @param zip
+		 */
+		public LocationMaster(Double longitude, Double latitude, String type, String locationNumber, Double pickup,
+				String zip) {
+			super();
+			this.longitude = longitude;
+			this.latitude = latitude;
+			this.type = type;
+			this.locationNumber = locationNumber;
+			this.pickup = pickup;
+			this.zip = zip;
+		}
+
+		/**
+		 * @param longitude
+		 * @param latitude
+		 * @param type
+		 * @param locationNumber
+		 * @param pickup
 		 */
 		public LocationMaster(Double longitude, Double latitude, String type, String locationNumber, Double pickup) {
 			super();
@@ -200,6 +216,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		private String type;
 		private String locationNumber;
 		private Double pickup;
+		private String zip;
 		
 		public Double getLongitude() {
 			return longitude;
@@ -232,6 +249,14 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 
 		public void setPickup(Double pickup) {
 			this.pickup = pickup;
+		}
+
+		public String getZip() {
+			return zip;
+		}
+
+		public void setZip(String zip) {
+			this.zip = zip;
 		}
 	}
 }

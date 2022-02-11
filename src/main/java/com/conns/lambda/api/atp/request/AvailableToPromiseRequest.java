@@ -3,8 +3,10 @@ package com.conns.lambda.api.atp.request;
 import java.util.List;
 
 import com.conns.lambda.common.http.ResponseBody;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties
 public class AvailableToPromiseRequest extends ResponseBody{
 	
 	/**

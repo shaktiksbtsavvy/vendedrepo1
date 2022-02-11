@@ -90,7 +90,7 @@ public class ResponseBuilder {
 					Location loc = storeLocations.get(lr.getLocationNumber());
 					//pickupAtp.add(new PickupATPResponse(skuName,  getTodayInCST(), lr.getQtyAvailable()));
 					pickupAtp.add(new PickupATPResponse(skuName,lr.getLocationType(), loc.getLongitude(), loc.getLatitude(), lr.getLocationNumber(),
-							loc.getDistance(), lr.getQtyAvailable()));
+							loc.getDistance(), lr.getQtyAvailable(), getTodayInCST()));
 				} else if (lr != null && lr.getLocationType().equalsIgnoreCase("WH")) {
 					String dateAvailble = null;
 					Location loc = whLocations.get(lr.getLocationNumber());

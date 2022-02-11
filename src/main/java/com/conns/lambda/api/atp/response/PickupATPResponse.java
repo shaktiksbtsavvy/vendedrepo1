@@ -26,7 +26,7 @@ public class PickupATPResponse {
 	}
 	
 	public PickupATPResponse(String sku, String locationType, Double locationLong, Double locationLat, String location,
-			Double distance, String availableQty) {
+			Double distance, String availableQty, String atpDate) {
 		super();
 		this.sku = sku;
 		this.locationType = locationType;
@@ -35,6 +35,7 @@ public class PickupATPResponse {
 		this.location = location;
 		this.distance = distance;
 		this.availableQty = availableQty != null ? Double.parseDouble(availableQty) : 0;
+		this.atpDate = atpDate;
 	}
 
 	/**

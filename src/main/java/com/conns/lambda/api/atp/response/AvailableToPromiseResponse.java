@@ -3,6 +3,7 @@ package com.conns.lambda.api.atp.response;
 import java.util.List;
 
 import com.conns.lambda.common.http.ResponseBody;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AvailableToPromiseResponse extends ResponseBody{
@@ -20,7 +21,7 @@ public class AvailableToPromiseResponse extends ResponseBody{
 	@JsonProperty("message")
 	private String message;
 	
-	@JsonProperty("reqID")
+	@JsonIgnore
 	private String reqID;
 	
 	@JsonProperty("delivery_atp")

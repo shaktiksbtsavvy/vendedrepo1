@@ -81,5 +81,11 @@ public class LocationResponse {
 	@JsonSetter("OnhandFlag")
 	public void setOnhandFlag(String onhandFlag) {
 		OnhandFlag = onhandFlag;
+	}
+
+	@Override
+	public String toString() {
+		return "LocationResponse [locationType=" + locationType + ", locationNumber=" + locationNumber
+				+ ", qtyAvailable=" + qtyAvailable + ", OnhandFlag=" + OnhandFlag + "]";
 	}	
 }

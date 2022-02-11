@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -66,12 +68,17 @@ public class ResponseBuilder {
 	 */
 	protected ResponseBody buildResponseObject(int code, String message, AvailableToPromiseRequest request,
 			InventoryAvailableResponse invRes, DeliveryDateResponse ddRes, LocationDTO locationDTO ) {
+		
+		logger.debug("1-Starting build response.");
 		AvailableToPromiseResponse tiwResponse = new AvailableToPromiseResponse();
 		tiwResponse.setReqID(request.getReqID());
 		tiwResponse.setCode(code);
 		tiwResponse.setMessage(message);
 		HashMap<String, Location> storeLocations = locationDTO.getStoreLocations();
 		HashMap<String, Location> whLocations = locationDTO.getWhLocations();
+		
+		debugList("2-Store Locations", storeLocations.values());
+		debugList("3-Warehouse Locations", whLocations.values());
 		
 		List<PickupATPResponse> pickupAtp = new ArrayList<PickupATPResponse>();
 		List<DeliveryATPResponse> deliveryAtp = new ArrayList<DeliveryATPResponse>();
@@ -81,24 +88,33 @@ public class ResponseBuilder {
 		NextDeliveryDateResponse nddr = ddRes.getData() != null && ddRes.getData().size() > 0 ? ddRes.getData().get(0)
 				: null;
 		
+		logger.debug("4-NextDeliveryDateResponse {}", nddr!= null? nddr.toString():"");
+		
 		List<ProductResponse> productResponseList = invRes.getData();
+		debugList("5-productResponseList", productResponseList);
+		
 		HashMap<String, String> nextDDDate = getPObySKU(ddRes);
 		for (ProductResponse pr : productResponseList) {
 			String skuName = pr.getSKU();
+			logger.debug("6-skuName: {}.", skuName);
 			for (LocationResponse lr : pr.getLocations()) {
+				logger.debug("7-LocationResponse: {}.", lr != null? lr.toString(): "");
 				if (lr != null && lr.getLocationType().equalsIgnoreCase("STR")) {
 					Location loc = storeLocations.get(lr.getLocationNumber());
+					logger.debug("8-Selected store location: {}.", loc!= null? loc.toString():"");
 					//pickupAtp.add(new PickupATPResponse(skuName,  getTodayInCST(), lr.getQtyAvailable()));
 					pickupAtp.add(new PickupATPResponse(skuName,lr.getLocationType(), loc.getLongitude(), loc.getLatitude(), lr.getLocationNumber(),
 							loc.getDistance(), lr.getQtyAvailable(), getTodayInCST()));
 				} else if (lr != null && lr.getLocationType().equalsIgnoreCase("WH")) {
 					String dateAvailble = null;
 					Location loc = whLocations.get(lr.getLocationNumber());
+					logger.debug("8-Selected warehouse location: {}.", loc!= null? loc.toString():"");
 					if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
 						dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
 					} else {
 						dateAvailble = nextDDDate.get(skuName);
 					}
+					logger.debug("9-dateAvailble: {}.", dateAvailble);
 					deliveryAtp.add(new DeliveryATPResponse(skuName,request.getZip(), lr.getQtyAvailable(), dateAvailble));
 				}
 			}
@@ -108,6 +124,20 @@ public class ResponseBuilder {
 		return tiwResponse;
 	}
 
+	private void debugList(String message, Collection coll) {
+		List objList = new ArrayList(coll);
+		debugList(message, objList);
+	}
+	
+	private void debugList(String message, List objList) {
+		logger.debug("Starting printing:" +message);
+		if(objList != null) {
+			for(Object o: objList) {
+				logger.debug(o.toString());
+			}
+		}
+	}
+	
 	private HashMap<String, String> getPObySKU(DeliveryDateResponse ddRes) {
 		List<NextDeliveryDateResponse> nddrList = ddRes.getData();
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -130,4 +160,6 @@ public class ResponseBuilder {
 		String today = formatter.format(currentdate.getTime());
 		return today;
 	}
+	
+	
 }

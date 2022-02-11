@@ -43,6 +43,11 @@ public class NextDeliveryDateResponse {
 	public void setPurchaseOrder(List<PurchaseOrder> purchaseOrder) {
 		this.purchaseOrder = purchaseOrder;
 	}
+	@Override
+	public String toString() {
+		return "NextDeliveryDateResponse [nextDeliveryDate=" + nextDeliveryDate + ", purchaseOrder=" + purchaseOrder
+				+ "]";
+	}
 	
 	
 

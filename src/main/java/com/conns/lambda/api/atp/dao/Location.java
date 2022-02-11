@@ -42,6 +42,8 @@ public  class Location implements Comparable<Location>{
 	private Double distance;
 	private String zip;
 	
+
+	
 	public Double getLongitude() {
 		return longitude;
 	}
@@ -92,5 +94,12 @@ public  class Location implements Comparable<Location>{
 
 	public void setZip(String zip) {
 		this.zip = zip;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Location [longitude=" + longitude + ", latitude=" + latitude + ", type=" + type + ", locationNumber="
+				+ locationNumber + ", distance=" + distance + ", zip=" + zip + "]";
 	}
 }

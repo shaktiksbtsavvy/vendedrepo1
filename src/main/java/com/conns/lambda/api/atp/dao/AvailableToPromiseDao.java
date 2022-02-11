@@ -16,6 +16,7 @@ import com.conns.lambda.api.atp.model.dd.DeliveryDateResponse;
 import com.conns.lambda.common.dao.DaxDataAccessObject;
 import com.conns.lambda.common.dao.LambdaDataAccessObject;
 import com.conns.lambda.common.exception.DBException;
+import com.conns.lambda.common.exception.ExceptionHandler;
 import com.conns.lambda.common.exception.InternalServerError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -55,6 +56,11 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	private static final AWSLambda awsLambda = AWSLambdaClientBuilder.standard().build();
 
 	public AvailableToPromiseDao() {
+		try {
+			loadLocations();
+		} catch (InternalServerError e) {
+			logger.error(ExceptionHandler.getStackDetails(e));
+		}
 	}
 	
 	
@@ -99,6 +105,8 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	
 	public void loadLocations(Boolean reload) throws InternalServerError {
 		if(locations == null || reload ) {
+			Runtime runtime = Runtime.getRuntime();
+			int memBefore = (int) runtime.freeMemory();
 			locations = new HashSet<LocationMaster>();
 			 Iterator<Item> records;
 			try {
@@ -114,6 +122,8 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		             locations.add(new LocationMaster(item.getDouble(_LONGITUDE),item.getDouble(_LATITUDE), item.getString(_TYPE),item.getString(_LOCATIONNUMBER), item.getDouble(_PICKUP), item.getString(_ZIP)));
 		         }
 			 }
+				int memAfter = (int) runtime.freeMemory();
+				logger.debug("Memory used by location load: " + (memAfter - memBefore)  + " bytes.");
 		}
 	}
 	

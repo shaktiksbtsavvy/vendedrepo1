@@ -11,6 +11,8 @@ import java.util.TimeZone;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.conns.lambda.api.atp.dao.Location;
+import com.conns.lambda.api.atp.dao.LocationDTO;
 import com.conns.lambda.api.atp.model.Inventory.InventoryAvailableResponse;
 import com.conns.lambda.api.atp.model.Inventory.LocationResponse;
 import com.conns.lambda.api.atp.model.Inventory.ProductResponse;
@@ -49,9 +51,9 @@ public class ResponseBuilder {
 	 * @throws InvalidRequestException
 	 */
 	public ResponseBody buildResponseObject(AvailableToPromiseRequest request, InventoryAvailableResponse invRes,
-			DeliveryDateResponse ddRes)
+			DeliveryDateResponse ddRes, LocationDTO locationDTO )
 			throws InvalidRequestException {
-		return buildResponseObject(HTTP_200, SUCCESS, request, invRes, ddRes);
+		return buildResponseObject(HTTP_200, SUCCESS, request, invRes, ddRes, locationDTO);
 	}
 
 	/**
@@ -63,11 +65,13 @@ public class ResponseBuilder {
 	 * @return
 	 */
 	protected ResponseBody buildResponseObject(int code, String message, AvailableToPromiseRequest request,
-			InventoryAvailableResponse invRes, DeliveryDateResponse ddRes) {
+			InventoryAvailableResponse invRes, DeliveryDateResponse ddRes, LocationDTO locationDTO ) {
 		AvailableToPromiseResponse tiwResponse = new AvailableToPromiseResponse();
 		tiwResponse.setReqID(request.getReqID());
 		tiwResponse.setCode(code);
 		tiwResponse.setMessage(message);
+		HashMap<String, Location> storeLocations = locationDTO.getStoreLocations();
+		HashMap<String, Location> whLocations = locationDTO.getWhLocations();
 		
 		List<PickupATPResponse> pickupAtp = new ArrayList<PickupATPResponse>();
 		List<DeliveryATPResponse> deliveryAtp = new ArrayList<DeliveryATPResponse>();
@@ -83,9 +87,13 @@ public class ResponseBuilder {
 			String skuName = pr.getSKU();
 			for (LocationResponse lr : pr.getLocations()) {
 				if (lr != null && lr.getLocationType().equalsIgnoreCase("STR")) {
-					pickupAtp.add(new PickupATPResponse(skuName, lr.getQtyAvailable(), getTodayInCST()));
+					Location loc = storeLocations.get(lr.getLocationNumber());
+					//pickupAtp.add(new PickupATPResponse(skuName,  getTodayInCST(), lr.getQtyAvailable()));
+					pickupAtp.add(new PickupATPResponse(skuName,lr.getLocationType(), loc.getLongitude(), loc.getLatitude(), lr.getLocationNumber(),
+							loc.getDistance(), lr.getQtyAvailable()));
 				} else if (lr != null && lr.getLocationType().equalsIgnoreCase("WH")) {
 					String dateAvailble = null;
+					Location loc = whLocations.get(lr.getLocationNumber());
 					if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
 						dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
 					} else {

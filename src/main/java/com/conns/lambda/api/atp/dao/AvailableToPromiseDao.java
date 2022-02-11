@@ -18,6 +18,7 @@ import com.conns.lambda.api.atp.model.Inventory.InventoryAvailableResponse;
 import com.conns.lambda.api.atp.model.dd.DeliveryDateRequest;
 import com.conns.lambda.api.atp.model.dd.DeliveryDateResponse;
 import com.conns.lambda.common.dao.DaxDataAccessObject;
+import com.conns.lambda.common.dao.LambdaDataAccessObject;
 import com.conns.lambda.common.exception.DBException;
 import com.conns.lambda.common.exception.InternalServerError;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AvailableToPromiseDao extends DaxDataAccessObject{
+public class AvailableToPromiseDao extends DaxDataAccessObject implements LambdaDataAccessObject {
 	private static final ObjectMapper mapper = new ObjectMapper(); // Use single instance of ObjectMapper in your code.
 	private static final String _INVENTORYFUN = "INVENTORYFUN";
 	private static final String _DDFUN = "DDFUN";
@@ -38,11 +39,11 @@ public class AvailableToPromiseDao extends DaxDataAccessObject{
 	private static final String _LOCATIONNUMBER = "number";
 	private static final String _PICKUP = "pickup";
 	
-	private static final String _LOCATIONTABLE = "LOCATIONTABLE ";
+	private static final String _LOCATIONTABLE = "LOCATIONTABLE";
 	private static final Logger logger = LogManager.getLogger(AvailableToPromiseDao.class);
 	private static final String locationTable = System.getenv(_LOCATIONTABLE) != null ? System.getenv(_LOCATIONTABLE).trim() : null; // _LOCATIONTABLE
 	
-	private static final String _DISTANCETHRESHOLD = "DISTANCETHRESHOLD ";
+	private static final String _DISTANCETHRESHOLD = "DISTANCETHRESHOLD";
 	private static final String DISTANCETHRESHOLD = System.getenv(_DISTANCETHRESHOLD) != null ? System.getenv(_DISTANCETHRESHOLD).trim() : null; // _LOCATIONTABLE
 	
 	private static final String _STORETYPE = "Store";
@@ -62,25 +63,12 @@ public class AvailableToPromiseDao extends DaxDataAccessObject{
 	
 	public LocationDTO getLocations(String lati, String longi) throws InternalServerError {
 		
-		if(locations == null ) {
-			locations = new HashSet<LocationMaster>();
-			 Iterator<Item> records;
-			try {
-				records = getAllRecords(locationTable);
-			} catch (DBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new InternalServerError("error scaning:" + locationTable);
-			}
-			 if(records != null) {
-		         while (records.hasNext()) {
-		             Item item = records.next();
-		             locations.add(new LocationMaster(item.getDouble(_LONGITUDE),item.getDouble(_LATITUDE), item.getString(_TYPE),item.getString(_LOCATIONNUMBER), item.getDouble(_PICKUP)));
-		         }
-			 }
-		}
+		loadLocations();
 		
 		 double distanceThresh = Double.parseDouble(DISTANCETHRESHOLD);
+		 
+		 logger.debug("Distance Thresh is :{}", distanceThresh);
+		 
 		 if(distanceThresh == 0 ) {
 			 throw new InternalServerError("Invalid threshold distance.");
 		 }
@@ -102,9 +90,35 @@ public class AvailableToPromiseDao extends DaxDataAccessObject{
 			 }
 		 }
 		 
+		 logger.debug("Number of store locations :{}", storeLocations.size());
+		 logger.debug("Number of warehouse locations :{}", whLocations.size());
+		 
 		 return new LocationDTO(storeLocations, whLocations);
 	}
 	
+	public void loadLocations() throws InternalServerError {
+		loadLocations(false);
+	}
+	
+	public void loadLocations(Boolean reload) throws InternalServerError {
+		if(locations == null || reload ) {
+			locations = new HashSet<LocationMaster>();
+			 Iterator<Item> records;
+			try {
+				records = getAllRecords(locationTable);
+			} catch (DBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new InternalServerError("error scaning:" + locationTable);
+			}
+			 if(records != null) {
+		         while (records.hasNext()) {
+		             Item item = records.next();
+		             locations.add(new LocationMaster(item.getDouble(_LONGITUDE),item.getDouble(_LATITUDE), item.getString(_TYPE),item.getString(_LOCATIONNUMBER), item.getDouble(_PICKUP)));
+		         }
+			 }
+		}
+	}
 	
 	private static double distance(double lat1, double lon1, double lat2, double lon2) {
 		if ((lat1 == lat2) && (lon1 == lon2)) {
@@ -122,15 +136,15 @@ public class AvailableToPromiseDao extends DaxDataAccessObject{
 	
 	
 	public InventoryAvailableResponse getInventoryLambda(InventoryAvailableRequest reqInv) throws JsonMappingException, JsonProcessingException {
-		Request req = new Request();
+		LambdaRequest req = new LambdaRequest();
 		req.setBody(mapper.writeValueAsString(reqInv));
 		req.setMethod("POST");
 		req.setPath("/inventory/quantity");
-		String result = invokeLambda(InventoryFunction,  req);
-		logger.debug("getInventoryLambda result {}.", result);
+		LambdaResponse resMod = invokeLambda(InventoryFunction,  req);
+		logger.debug("getInventoryLambda result {}.", resMod);
 		InventoryAvailableResponse inventoryRequest = null;
-	    if (result != null) {
-	    	ResponseModel resMod  = mapper.readValue(result, ResponseModel.class);
+	    if (resMod != null) {
+	    	//LambdaResponse resMod  = mapper.readValue(result, LambdaResponse.class);
 	    	inventoryRequest = mapper.readValue(resMod.getBody(), InventoryAvailableResponse.class);
 	    }
 	    return inventoryRequest;
@@ -138,44 +152,19 @@ public class AvailableToPromiseDao extends DaxDataAccessObject{
 
 	
 	public  DeliveryDateResponse getDDambda(DeliveryDateRequest reqDD) throws JsonMappingException, JsonProcessingException {
-		Request req = new Request();
+		LambdaRequest req = new LambdaRequest();
 		req.setBody(mapper.writeValueAsString(reqDD));
 		req.setMethod("POST");
 		req.setPath("/inventory/deliverydate");
-		String result = invokeLambda(ddFunction,  req);
-		logger.debug("getDDambda result {}.", result);
+		LambdaResponse resMod  = invokeLambda(ddFunction,  req);
+		logger.debug("getDDambda result {}.", resMod);
 		DeliveryDateResponse res = null;
-	    if (result != null) {
-	    	ResponseModel resMod  = mapper.readValue(result, ResponseModel.class);
+	    if (resMod != null) {
+	    	//LambdaResponse resMod  = mapper.readValue(result, LambdaResponse.class);
 	    	res = mapper.readValue(resMod.getBody(), DeliveryDateResponse.class);
 	    }
 	    return res;
 	}
-	
-	
-	private String invokeLambda(String functionNameIn, Request req) {
-		String resPayload = null;
-		try {
-			String payload = mapper.writeValueAsString(req);
-			logger.debug("Calling with payload {}.", payload);
-			String functionName = functionNameIn;
-			logger.debug("Calling function {}.", functionNameIn);
-				InvokeRequest invokeRequest = new InvokeRequest().withFunctionName(functionName).withPayload(payload);
-				
-				InvokeResult invokeResult = awsLambda.invoke(invokeRequest);
-				logger.debug(invokeResult.getStatusCode());
-				ByteBuffer byteBuffer = invokeResult.getPayload();
-			    if (byteBuffer != null && byteBuffer.hasArray()) {
-			    	resPayload = new String(byteBuffer.array());
-			    }
-			    logger.debug("resPayload {}.", resPayload);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return resPayload;
-	}
-	
 	
 	public static class LocationMaster {
 		/**

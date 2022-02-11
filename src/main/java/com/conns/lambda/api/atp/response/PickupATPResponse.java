@@ -6,6 +6,39 @@ public class PickupATPResponse {
 	
 	/**
 	 * @param sku
+	 * @param locationType
+	 * @param locationLong
+	 * @param locationLat
+	 * @param location
+	 * @param distance
+	 * @param availableQty
+	 */
+	public PickupATPResponse(String sku, String locationType, Double locationLong, Double locationLat, String location,
+			Double distance, Double availableQty) {
+		super();
+		this.sku = sku;
+		this.locationType = locationType;
+		this.locationLong = locationLong;
+		this.locationLat = locationLat;
+		this.location = location;
+		this.distance = distance;
+		this.availableQty = availableQty;
+	}
+	
+	public PickupATPResponse(String sku, String locationType, Double locationLong, Double locationLat, String location,
+			Double distance, String availableQty) {
+		super();
+		this.sku = sku;
+		this.locationType = locationType;
+		this.locationLong = locationLong;
+		this.locationLat = locationLat;
+		this.location = location;
+		this.distance = distance;
+		this.availableQty = availableQty != null ? Double.parseDouble(availableQty) : 0;
+	}
+
+	/**
+	 * @param sku
 	 * @param atpDate
 	 * @param availableQty
 	 */

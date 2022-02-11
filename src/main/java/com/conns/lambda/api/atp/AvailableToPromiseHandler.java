@@ -25,7 +25,7 @@ public class AvailableToPromiseHandler extends APIRequestHandler {
 
 	public AvailableToPromiseHandler() {
 		logger.debug("registring controllers");
-		controllers.register("POST",".*/atp", AvailableToPromiseController.getInstance());
+		controllers.register("POST",".*/atp/products", AvailableToPromiseController.getInstance());
 	}
 
 	

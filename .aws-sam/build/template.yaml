@@ -37,29 +37,68 @@ Conditions:
     - Ref: AWS::Region
     - us-west-1
 Mappings:
-  EnvMap:
+  EastRegEnvMap:
     Dev:
       DAXENDPOINT: daxs://dax-api-cluster-dev.x2sy7j.dax-clusters.us-east-1.amazonaws.com
-      FUNMEMORYSIZE: 10240
-      INVENTORYFUN: InventoryApi-Dev
-      DDFUN: DeliveryDateApi-Dev
-      LOCATIONTABLE: TST_CONNS_LOCATION
       POLICYDAXRESOURCE: arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-dev
       POLICYDDBRESOURCE:
       - arn:aws:dynamodb:us-east-1:203315843709:table/TST_CONNS_LOCATION
     UAT:
       DAXENDPOINT: daxs://dax-api-cluster-uat.x2sy7j.dax-clusters.us-east-1.amazonaws.com
-      FUNMEMORYSIZE: 10240
-      INVENTORYFUN: InventoryApi-UAT
-      DDFUN: DeliveryDateApi-UAT
-      LOCATIONTABLE: UAT_CONNS_LOCATION
       POLICYDAXRESOURCE: arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-uat
       POLICYDDBRESOURCE:
       - arn:aws:dynamodb:us-east-1:203315843709:table/UAT_CONNS_LOCATION
     Prod:
+      DAXENDPOINT: daxs://dax-api-cluster-uat.x2sy7j.dax-clusters.us-east-1.amazonaws.com
+      POLICYDAXRESOURCE: arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-uat
+      POLICYDDBRESOURCE:
+      - arn:aws:dynamodb:us-east-1:203315843709:table/UAT_CONNS_LOCATION
+  WestRegEnvMap:
+    Dev:
+      DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com
+      POLICYDAXRESOURCE: arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev
+      POLICYDDBRESOURCE:
+      - arn:aws:dynamodb:us-west-1:203315843709:table/TST_CONNS_LOCATION
+    UAT:
+      DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com
+      POLICYDAXRESOURCE: arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev
+      POLICYDDBRESOURCE:
+      - arn:aws:dynamodb:us-west-1:203315843709:table/TST_CONNS_LOCATION
+    Prod:
+      DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com
+      POLICYDAXRESOURCE: arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev
+      POLICYDDBRESOURCE:
+      - arn:aws:dynamodb:us-west-1:203315843709:table/TST_CONNS_LOCATION
+  EnvMap:
+    Dev:
       FUNMEMORYSIZE: 10240
       INVENTORYFUN: InventoryApi-Dev
       DDFUN: DeliveryDateApi-Dev
+      LOCATIONTABLE: TST_CONNS_LOCATION
+    UAT:
+      FUNMEMORYSIZE: 10240
+      INVENTORYFUN: InventoryApi-UAT
+      DDFUN: DeliveryDateApi-UAT
+      LOCATIONTABLE: UAT_CONNS_LOCATION
+    Prod:
+      FUNMEMORYSIZE: 10240
+      INVENTORYFUN: InventoryApi-UAT
+      DDFUN: DeliveryDateApi-UAT
+      LOCATIONTABLE: UAT_CONNS_LOCATION
+  RegionMap:
+    us-east-1:
+      SECURITYGROUPID:
+      - sg-08b41ec1af2f1a000
+      SUBNETID:
+      - subnet-09b75b10749852dca
+      - subnet-09eb2858dd51a7a65
+      - subnet-0548df04e14dea60d
+    us-west-1:
+      SECURITYGROUPID:
+      - sg-0e0ce71dd334a2251
+      SUBNETID:
+      - subnet-039b1a40fc66260b3
+      - subnet-0a90d1ee750bfa736
 Resources:
   AvailableToPromiseFunction:
     Type: AWS::Serverless::Function
@@ -69,25 +108,11 @@ Resources:
         - '-'
         - - AvailableToPromiseApi
           - Ref: StageName
-      Description: AvailableToPromise API function East Region.
+      Description: AvailableToPromise API function Region.
       CodeUri: AvailableToPromiseFunction
       Handler: com.conns.lambda.api.atp.AvailableToPromiseHandler::handleRequest
       Runtime: java11
       PackageType: Zip
-      VpcConfig:
-        SecurityGroupIds:
-          Fn::If:
-          - CreateEastResources
-          - - sg-08b41ec1af2f1a000
-          - - sg-0e0ce71dd334a2251
-        SubnetIds:
-          Fn::If:
-          - CreateEastResources
-          - - subnet-09b75b10749852dca
-            - subnet-09eb2858dd51a7a65
-            - subnet-0548df04e14dea60d
-          - - subnet-039b1a40fc66260b3
-            - subnet-0a90d1ee750bfa736
       Policies:
       - Statement:
         - Sid: DAXLambdaAccessPolicy
@@ -95,19 +120,31 @@ Resources:
           Action:
           - dax:*
           Resource:
-            Fn::FindInMap:
-            - EnvMap
-            - Ref: StageName
-            - POLICYDAXRESOURCE
+            Fn::If:
+            - CreateEastResources
+            - Fn::FindInMap:
+              - EastRegEnvMap
+              - Ref: StageName
+              - POLICYDAXRESOURCE
+            - Fn::FindInMap:
+              - WestRegEnvMap
+              - Ref: StageName
+              - POLICYDAXRESOURCE
         - Sid: DYDBAccessPolicy
           Effect: Allow
           Action:
           - dynamodb:*
           Resource:
-            Fn::FindInMap:
-            - EnvMap
-            - Ref: StageName
-            - POLICYDDBRESOURCE
+            Fn::If:
+            - CreateEastResources
+            - Fn::FindInMap:
+              - EastRegEnvMap
+              - Ref: StageName
+              - POLICYDDBRESOURCE
+            - Fn::FindInMap:
+              - WestRegEnvMap
+              - Ref: StageName
+              - POLICYDDBRESOURCE
       - LambdaInvokePolicy:
           FunctionName:
             Fn::FindInMap:
@@ -120,6 +157,17 @@ Resources:
             - EnvMap
             - Ref: StageName
             - DDFUN
+      VpcConfig:
+        SecurityGroupIds:
+          Fn::FindInMap:
+          - RegionMap
+          - Ref: AWS::Region
+          - SECURITYGROUPID
+        SubnetIds:
+          Fn::FindInMap:
+          - RegionMap
+          - Ref: AWS::Region
+          - SUBNETID
       MemorySize:
         Fn::FindInMap:
         - EnvMap
@@ -142,10 +190,16 @@ Resources:
             - Ref: StageName
             - DDFUN
           DAXENDPOINT:
-            Fn::FindInMap:
-            - EnvMap
-            - Ref: StageName
-            - DAXENDPOINT
+            Fn::If:
+            - CreateEastResources
+            - Fn::FindInMap:
+              - EastRegEnvMap
+              - Ref: StageName
+              - DAXENDPOINT
+            - Fn::FindInMap:
+              - WestRegEnvMap
+              - Ref: StageName
+              - DAXENDPOINT
           LOCATIONTABLE:
             Fn::FindInMap:
             - EnvMap

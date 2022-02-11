@@ -33,6 +33,8 @@ public class ResponseBuilder {
 	protected static final int HTTP_200 = 200;
 	protected static final int HTTP_500 = 500;
 	protected static final String SUCCESS = "Success";
+	protected static final String _WH = "WH";
+	protected static final String _STR = "STR";
 	private static final Logger logger = LogManager.getLogger(ResponseBuilder.class);
 
 	public ResponseBody buildErrorResponseObject(int code, String message, String errorDetails) {
@@ -99,13 +101,13 @@ public class ResponseBuilder {
 			logger.debug("6-skuName: {}.", skuName);
 			for (LocationResponse lr : pr.getLocations()) {
 				logger.debug("7-LocationResponse: {}.", lr != null? lr.toString(): "");
-				if (lr != null && lr.getLocationType().equalsIgnoreCase("STR")) {
+				if (lr != null && lr.getLocationType().equalsIgnoreCase(_STR)) {
 					Location loc = storeLocations.get(lr.getLocationNumber());
 					logger.debug("8-Selected store location: {}.", loc!= null? loc.toString():"");
 					//pickupAtp.add(new PickupATPResponse(skuName,  getTodayInCST(), lr.getQtyAvailable()));
 					pickupAtp.add(new PickupATPResponse(skuName,lr.getLocationType(), loc.getLongitude(), loc.getLatitude(), lr.getLocationNumber(),
 							loc.getDistance(), lr.getQtyAvailable(), getTodayInCST()));
-				} else if (lr != null && lr.getLocationType().equalsIgnoreCase("WH")) {
+				} else if (lr != null && lr.getLocationType().equalsIgnoreCase(_WH)) {
 					String dateAvailble = null;
 					Location loc = whLocations.get(lr.getLocationNumber());
 					logger.debug("8-Selected warehouse location: {}.", loc!= null? loc.toString():"");

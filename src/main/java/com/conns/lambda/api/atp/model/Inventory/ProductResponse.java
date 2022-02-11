@@ -54,4 +54,9 @@ public class ProductResponse {
 		this.locations.add(new LocationResponse(location));
 	}
 
+	@Override
+	public String toString() {
+		return "ProductResponse [SKU=" + SKU + ", locations=" + locations + "]";
+	}
+
 }

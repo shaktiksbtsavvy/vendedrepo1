@@ -89,6 +89,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		//loadLocations();
 
 		double distanceThresh = Double.parseDouble(DISTANCETHRESHOLD);
+		double range = distanceThresh/40.0; //average/minimum miles per degree
 
 		logger.debug("Distance Thresh is :{}", distanceThresh);
 
@@ -99,7 +100,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		double lat = Double.parseDouble(lati);
 		double lon = Double.parseDouble(longi);
 
-		HashSet<LocationMaster> selLocations = getLocations(lat, lon);
+		HashSet<LocationMaster> selLocations = getLocations(lat, lon, range);
 
 		HashMap<String, Location> storeLocations = new HashMap<String, Location>();
 		HashMap<String, Location> whLocations = new HashMap<String, Location>();
@@ -152,7 +153,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		}
 	}
 
-	public HashSet<LocationMaster> getLocations(double lat, double lon) throws InternalServerError {
+	public HashSet<LocationMaster> getLocations(double lat, double lon,  double range) throws InternalServerError {
 
 		HashSet<LocationMaster> selectedLocations = new HashSet<LocationMaster>();
 		try {
@@ -161,10 +162,10 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 
 			Table table = dynamoDB.getTable(locationTable);
 
-			double latMin = lat - 5;
-			double latMax = lat + 5;
-			double lonMin = lon - 5;
-			double lonMax = lon + 5;
+			double latMin = lat - range;
+			double latMax = lat + range;
+			double lonMin = lon - range;
+			double lonMax = lon + range;
 			
 			logger.debug("latMin :{}  latMax: {}", latMin, latMax);
 			logger.debug("lonMin :{}  lonMax: {}", lonMin, lonMax);
@@ -183,7 +184,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 
 			querySpec.withProjectionExpression("latitude, longitude, number, pickup, state, type, zip")
 					.withKeyConditionExpression(
-							"#latitude BETWEEN latMin AND latMax and #longitude BETWEEN lonMin AND lonMax")
+							"#latitude BETWEEN :latMin AND :latMax and #longitude BETWEEN :lonMin AND :lonMax")
 					.withNameMap(nameMap).withValueMap(valueMap);
 			ItemCollection<QueryOutcome> items = null;
 			Iterator<Item> iterator = null;
@@ -206,6 +207,8 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 			throw new InternalServerError("Unable to query:" + locationTable);
 		}
 
+		logger.debug("Number of location found {}.", selectedLocations.size());
+		
 		return selectedLocations;
 	}
 

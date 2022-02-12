@@ -176,7 +176,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 
 			HashMap<String, Object> valueMap = new HashMap<String, Object>();
 			valueMap.put(":latMin", latMin);
-			valueMap.put(":latMax", latMax);
+			//valueMap.put(":latMax", latMax);
 			valueMap.put(":lonMin", lonMin);
 			valueMap.put(":lonMax", lonMax);
 

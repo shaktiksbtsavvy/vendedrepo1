@@ -183,7 +183,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 			QuerySpec querySpec = new QuerySpec();
 
 			querySpec.withProjectionExpression("latitude, longitude, number, pickup, state, type, zip")
-					.withFilterExpression(
+					.withKeyConditionExpression(
 							"#latitude BETWEEN :latMin AND :latMax and #longitude BETWEEN :lonMin AND :lonMax")
 					.withNameMap(nameMap).withValueMap(valueMap);
 			ItemCollection<QueryOutcome> items = null;

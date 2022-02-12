@@ -86,7 +86,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 
 	public LocationDTO getLocations(String lati, String longi) throws InternalServerError {
 
-		//loadLocations();
+		loadLocations();
 
 		double distanceThresh = Double.parseDouble(DISTANCETHRESHOLD);
 		double range = distanceThresh/40.0; //average/minimum miles per degree
@@ -100,12 +100,12 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		double lat = Double.parseDouble(lati);
 		double lon = Double.parseDouble(longi);
 
-		HashSet<LocationMaster> selLocations = getLocations(lat, lon, range);
+		//HashSet<LocationMaster> selLocations = getLocations(lat, lon, range);
 
 		HashMap<String, Location> storeLocations = new HashMap<String, Location>();
 		HashMap<String, Location> whLocations = new HashMap<String, Location>();
 
-		for (LocationMaster lm : selLocations) {
+		for (LocationMaster lm : locations) {
 			double distance = distance(lm.getLatitude(), lm.getLongitude(), lat, lon);
 			if (distance <= distanceThresh) {
 				if (lm.getType() != null && lm.getType().equalsIgnoreCase(_STORETYPE)) {

@@ -111,7 +111,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 				if (lm.getType() != null && lm.getType().equalsIgnoreCase(_STORETYPE)) {
 					storeLocations.put(lm.getLocationNumber(), new Location(lm, distance));
 				}
-				if (lm.getPickup() == 0 && lm.getType() != null && lm.getType().equalsIgnoreCase(_WHTYPE)) {
+				if (lm.getPickup() == 1 && lm.getType() != null && lm.getType().equalsIgnoreCase(_WHTYPE)) {
 					whLocations.put(lm.getLocationNumber(), new Location(lm, distance));
 				}
 			}

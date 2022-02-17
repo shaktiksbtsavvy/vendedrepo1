@@ -69,6 +69,7 @@ public class AvailableToPromiseController extends RequestController {
 		AvailableToPromiseRequest atpRequest = null;
 		headers.setHeader("Access-Control-Allow-Origin", "*");
 		headers.setHeader("Access-Control-Allow-Headers", "*");
+		headers.setHeader("Access-Control-Allow-Methods", "OPTIONS,POST,GET");
 
 		Performance p1 = new Performance("Request Parsing", logger);
 		p1.start();

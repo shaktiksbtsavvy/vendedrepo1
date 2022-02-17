@@ -67,6 +67,8 @@ public class AvailableToPromiseController extends RequestController {
 		logger.debug("Request Body Received:{}", requestBody);
 
 		AvailableToPromiseRequest atpRequest = null;
+		headers.setHeader("Access-Control-Allow-Origin", "*");
+		headers.setHeader("Access-Control-Allow-Headers", "*");
 
 		Performance p1 = new Performance("Request Parsing", logger);
 		p1.start();

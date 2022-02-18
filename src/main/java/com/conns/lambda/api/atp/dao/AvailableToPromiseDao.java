@@ -28,18 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.ItemCollection;
 import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
-import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 
 public class AvailableToPromiseDao extends DaxDataAccessObject implements LambdaDataAccessObject {
 	private static final ObjectMapper mapper = new ObjectMapper(); // Use single instance of ObjectMapper in your code.
@@ -67,7 +57,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	private static final String _STORETYPE = "Store";
 	private static final String _WHTYPE = "Warehouse";
 
-	private static Set<LocationMaster> locations = null;
+
 
 	private static final String InventoryFunction = System.getenv(_INVENTORYFUN) != null
 			? System.getenv(_INVENTORYFUN).trim()
@@ -86,7 +76,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 
 	public LocationDTO getLocations(String lati, String longi) throws InternalServerError {
 
-		loadLocations();
+		Set<LocationMaster> locations = loadLocations();
 
 		double distanceThresh = Double.parseDouble(DISTANCETHRESHOLD);
 		double range = distanceThresh/40.0; //average/minimum miles per degree
@@ -123,11 +113,12 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		return new LocationDTO(storeLocations, whLocations);
 	}
 
-	public void loadLocations() throws InternalServerError {
-		loadLocations(false);
+	public Set<LocationMaster> loadLocations() throws InternalServerError {
+		return loadLocations(true);
 	}
 
-	public void loadLocations(Boolean reload) throws InternalServerError {
+	public Set<LocationMaster> loadLocations(Boolean reload) throws InternalServerError {
+		Set<LocationMaster> locations = null;
 		if (locations == null || reload) {
 			Runtime runtime = Runtime.getRuntime();
 			int memBefore = (int) runtime.freeMemory();
@@ -151,6 +142,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 			int memAfter = (int) runtime.freeMemory();
 			logger.debug("Memory used by location load: " + (memAfter - memBefore) + " bytes.");
 		}
+		return locations;
 	}
 
 	public HashSet<LocationMaster> getLocations(double lat, double lon,  double range) throws InternalServerError {

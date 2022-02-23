@@ -101,9 +101,9 @@ public class AvailableToPromiseController extends RequestController {
 		
 		
 		CompletableFuture<InventoryAvailableResponse> inventoryLambdaFuture = CompletableFuture.supplyAsync(() -> getInventoryAvailable(locationDTO,atpReq));
-//		if(locationDTO.getDLLocation()== null || locationDTO.getDLLocation() == "") {
-//			throw new InvalidRequestException("No warehouse found with in the delivery radius.");
-//		}
+		if(locationDTO.getDLLocation()== null || locationDTO.getDLLocation() == "") {
+			throw new InvalidRequestException("No warehouse found within the delivery radius.");
+		}
 		CompletableFuture<DeliveryDateResponse> ddLambdaFuture = CompletableFuture.supplyAsync(() -> getDeliveryDate(locationDTO,atpReq));
 		InventoryAvailableResponse invRes = null;
 		DeliveryDateResponse ddRes = null;

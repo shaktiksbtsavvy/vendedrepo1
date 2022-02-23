@@ -89,4 +89,10 @@ public class InventoryAvailableRequest {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "InventoryAvailableRequest [reqID=" + reqID + ", SKU=" + SKU + ", zipcode=" + zipcode + ", DL_Location="
+				+ DL_Location + ", PU_Location=" + PU_Location + "]";
+	}
+
 }

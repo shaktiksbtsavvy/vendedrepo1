@@ -76,5 +76,11 @@ public class DeliveryDateResponse extends ResponseBody{
 	public void setData(List<NextDeliveryDateResponse> data) {
 		this.data = data;
 	}
+
+	@Override
+	public String toString() {
+		return "DeliveryDateResponse [code=" + code + ", message=" + message + ", reqID=" + reqID + ", data=" + data
+				+ "]";
+	}
 	
 }

@@ -59,6 +59,12 @@ public class DeliveryDateRequest {
 	public void setDL_Location(String dL_Location) {
 		DL_Location = dL_Location;
 	}
+
+	@Override
+	public String toString() {
+		return "DeliveryDateRequest [reqID=" + reqID + ", SKU=" + SKU + ", zipcode=" + zipcode + ", DL_Location="
+				+ DL_Location + "]";
+	}
 	
 
 }

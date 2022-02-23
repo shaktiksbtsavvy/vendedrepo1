@@ -151,8 +151,10 @@ public class AvailableToPromiseController extends RequestController {
 		invRequest.setSKU(atpRequest.getProducts());
 		invRequest.setZipcode(atpRequest.getZip());
 		InventoryAvailableResponse invRes;
+		logger.debug("InventoryAvailableRequest to Inventory Lambda: {}", invRequest);
 		try {
 			invRes = dao.getInventoryLambda(invRequest);
+			logger.debug("InventoryAvailableResponse from Inventory Lambda:{}", invRes);
 		} catch (JsonMappingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -172,8 +174,10 @@ public class AvailableToPromiseController extends RequestController {
 		ddRequest.setZipcode(locationDTO.getDLZip()); ///Request zip or location Zip
 		ddRequest.setSKU(atpRequest.getProducts());
 		DeliveryDateResponse ddRes;
+		logger.debug("DeliveryDateRequest to DD Lambda: {}", ddRequest);
 		try {
 			ddRes = dao.getDDambda(ddRequest);
+			logger.debug("DeliveryDateResponse from DD Lambda: {}", ddRes);
 		} catch (JsonMappingException e) {
 			e.printStackTrace();
 			throw new CompletionException(e);

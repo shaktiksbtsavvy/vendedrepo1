@@ -75,5 +75,11 @@ public class InventoryAvailableResponse extends ResponseBody{
 	public void setData(List<ProductResponse> data) {
 		this.data = data;
 	}
+
+	@Override
+	public String toString() {
+		return "InventoryAvailableResponse [code=" + code + ", message=" + message + ", reqID=" + reqID + ", data="
+				+ data + "]";
+	}
 	
 }

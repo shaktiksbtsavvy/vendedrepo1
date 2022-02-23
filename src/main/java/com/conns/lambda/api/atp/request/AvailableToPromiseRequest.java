@@ -16,7 +16,6 @@ public class AvailableToPromiseRequest extends ResponseBody{
 		super();
 	}
 
-
 	@JsonProperty("reqID")
 	private String reqID;
 	

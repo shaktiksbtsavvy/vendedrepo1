@@ -5,10 +5,11 @@ import java.util.List;
 
 import com.conns.lambda.common.http.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
-@JsonPropertyOrder({ "code", "message", "reqID", "data"})
+@JsonIgnoreProperties
 public class DeliveryDateResponse extends ResponseBody{
 	
 	/**

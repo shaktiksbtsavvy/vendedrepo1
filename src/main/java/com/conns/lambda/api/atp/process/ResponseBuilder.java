@@ -77,9 +77,9 @@ public class ResponseBuilder {
 		tiwResponse.setMessage(message);
 		HashMap<String, Location> storeLocations = locationDTO.getStoreLocations();
 		HashMap<String, Location> whLocations = locationDTO.getWhLocations();
-		
-		logger.debug("storeLocations size:{}"+ storeLocations != null? storeLocations.size() : storeLocations);
-		logger.debug("whLocations size:{}"+ whLocations != null? whLocations.size() : whLocations);
+
+		logger.debug("storeLocations size:{}" + storeLocations != null ? storeLocations.size() : storeLocations);
+		logger.debug("whLocations size:{}" + whLocations != null ? whLocations.size() : whLocations);
 
 		debugList("2-Store Locations", storeLocations.values());
 		debugList("3-Warehouse Locations", whLocations.values());
@@ -107,23 +107,29 @@ public class ResponseBuilder {
 					if (lr != null && lr.getLocationType().equalsIgnoreCase(_STR)) {
 						Location loc = storeLocations.get(lr.getLocationNumber());
 						logger.debug("8-Selected store location: {}.", loc != null ? loc.toString() : "");
-						// pickupAtp.add(new PickupATPResponse(skuName, getTodayInCST(),
-						// lr.getQtyAvailable()));
-						pickupAtp.add(new PickupATPResponse(skuName, lr.getLocationType(), loc.getLongitude(),
-								loc.getLatitude(), lr.getLocationNumber(), loc.getDistance(), lr.getQtyAvailable(),
-								getTodayInCST()));
+						if (loc != null) {
+							// pickupAtp.add(new PickupATPResponse(skuName, getTodayInCST(),
+							// lr.getQtyAvailable()));
+							pickupAtp.add(new PickupATPResponse(skuName, lr.getLocationType(), loc.getLongitude(),
+									loc.getLatitude(), lr.getLocationNumber(), loc.getDistance(), lr.getQtyAvailable(),
+									getTodayInCST()));
+						}
+
 					} else if (lr != null && lr.getLocationType().equalsIgnoreCase(_WH)) {
 						String dateAvailble = null;
 						Location loc = whLocations.get(lr.getLocationNumber());
 						logger.debug("8-Selected warehouse location: {}.", loc != null ? loc.toString() : "");
-						if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
-							dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
-						} else {
-							dateAvailble = nextDDDate.get(skuName);
+						if (loc != null) {
+							if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
+								dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
+							} else {
+								dateAvailble = nextDDDate.get(skuName);
+							}
+							logger.debug("9-dateAvailble: {}.", dateAvailble);
+							deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
+									dateAvailble));
 						}
-						logger.debug("9-dateAvailble: {}.", dateAvailble);
-						deliveryAtp.add(
-								new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(), dateAvailble));
+
 					}
 				}
 

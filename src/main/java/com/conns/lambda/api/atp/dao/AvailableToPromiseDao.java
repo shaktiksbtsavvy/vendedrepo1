@@ -5,17 +5,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.conns.lambda.api.atp.model.Inventory.InventoryAvailableRequest;
 import com.conns.lambda.api.atp.model.Inventory.InventoryAvailableResponse;
 import com.conns.lambda.api.atp.model.dd.DeliveryDateRequest;
 import com.conns.lambda.api.atp.model.dd.DeliveryDateResponse;
+import com.conns.lambda.api.atp.model.geo.GeoLocationRequest;
+import com.conns.lambda.api.atp.model.geo.GeoStoreResponse;
+import com.conns.lambda.api.atp.model.geo.StoreResponse;
 import com.conns.lambda.common.dao.DaxDataAccessObject;
 import com.conns.lambda.common.dao.LambdaDataAccessObject;
 import com.conns.lambda.common.exception.DBException;
@@ -28,13 +27,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.amazonaws.services.dynamodbv2.document.ItemCollection;
-import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
-
 public class AvailableToPromiseDao extends DaxDataAccessObject implements LambdaDataAccessObject {
 	private static final ObjectMapper mapper = new ObjectMapper(); // Use single instance of ObjectMapper in your code.
 	private static final String _INVENTORYFUN = "INVENTORYFUN";
 	private static final String _DDFUN = "DDFUN";
+	private static final String _GEOLOCATIONFUN = "GEOLOCATIONFUN";
 
 	private static final String _LONGITUDE = "longitude";
 	private static final String _LATITUDE = "latitude";
@@ -57,10 +54,11 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	private static final String _STORETYPE = "Store";
 	private static final String _WHTYPE = "Warehouse";
 
-
-
 	private static final String InventoryFunction = System.getenv(_INVENTORYFUN) != null
 			? System.getenv(_INVENTORYFUN).trim()
+			: null; // INVTABLENAME
+	private static final String GeoLocationFunction = System.getenv(_GEOLOCATIONFUN) != null
+			? System.getenv(_GEOLOCATIONFUN).trim()
 			: null; // INVTABLENAME
 	private static final String ddFunction = System.getenv(_DDFUN) != null ? System.getenv(_DDFUN).trim() : null; // INVTABLENAME
 
@@ -79,7 +77,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		Set<LocationMaster> locations = loadLocations();
 
 		double distanceThresh = Double.parseDouble(DISTANCETHRESHOLD);
-		double range = distanceThresh/40.0; //average/minimum miles per degree
+		double range = distanceThresh / 40.0; // average/minimum miles per degree
 
 		logger.debug("Distance Thresh is :{}", distanceThresh);
 
@@ -90,7 +88,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		double lat = Double.parseDouble(lati);
 		double lon = Double.parseDouble(longi);
 
-		//HashSet<LocationMaster> selLocations = getLocations(lat, lon, range);
+		// HashSet<LocationMaster> selLocations = getLocations(lat, lon, range);
 
 		HashMap<String, Location> storeLocations = new HashMap<String, Location>();
 		HashMap<String, Location> whLocations = new HashMap<String, Location>();
@@ -105,6 +103,44 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 					whLocations.put(lm.getLocationNumber(), new Location(lm, distance));
 				}
 			}
+		}
+
+		logger.debug("Number of store locations :{}", storeLocations.size());
+		logger.debug("Number of warehouse locations :{}", whLocations.size());
+
+		return new LocationDTO(storeLocations, whLocations);
+	}
+
+	public LocationDTO getLocationsUsingLambda(String requestId, String lati, String longi) throws InternalServerError {
+		Double distanceThresh = Double.parseDouble(DISTANCETHRESHOLD);
+
+		logger.debug("Distance Thresh is :{}", distanceThresh);
+
+		HashMap<String, Location> storeLocations = new HashMap<String, Location>();
+		HashMap<String, Location> whLocations = new HashMap<String, Location>();
+
+		GeoLocationRequest geoReq = new GeoLocationRequest(requestId, lati, longi, null,
+				distanceThresh > 0 ? distanceThresh : null);
+
+		GeoStoreResponse geoRes;
+		try {
+			geoRes = getGeoLocationLambda(geoReq);
+			for (StoreResponse sr : geoRes.getStores()) {
+				if (sr.getType() != null && sr.getType().equalsIgnoreCase(_STORETYPE)) {
+					storeLocations.put(sr.getStoreId(), new Location(sr));
+				}
+				if (sr.getType() != null && sr.getType().equalsIgnoreCase(_WHTYPE)) {
+					whLocations.put(sr.getStoreId(), new Location(sr));
+				}
+			}
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new InternalServerError("Invalid response structure from getGeoLocationLambda");
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new InternalServerError("Invalid response structure from getGeoLocationLambda");
 		}
 
 		logger.debug("Number of store locations :{}", storeLocations.size());
@@ -145,65 +181,56 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		return locations;
 	}
 
-	public HashSet<LocationMaster> getLocations(double lat, double lon,  double range) throws InternalServerError {
-
-		HashSet<LocationMaster> selectedLocations = new HashSet<LocationMaster>();
-		try {
-			AmazonDynamoDB client = getDaxConnection();
-			DynamoDB dynamoDB = new DynamoDB(client);
-
-			Table table = dynamoDB.getTable(locationTable);
-
-			double latMin = lat - range;
-			double latMax = lat + range;
-			double lonMin = lon - range;
-			double lonMax = lon + range;
-			
-			logger.debug("latMin :{}  latMax: {}", latMin, latMax);
-			logger.debug("lonMin :{}  lonMax: {}", lonMin, lonMax);
-
-			HashMap<String, String> nameMap = new HashMap<String, String>();
-			nameMap.put("#latitude", "latitude");
-			nameMap.put("#longitude", "longitude");
-
-			HashMap<String, Object> valueMap = new HashMap<String, Object>();
-			valueMap.put(":latMin", latMin);
-			//valueMap.put(":latMax", latMax);
-			valueMap.put(":lonMin", lonMin);
-			valueMap.put(":lonMax", lonMax);
-
-			QuerySpec querySpec = new QuerySpec();
-
-			querySpec.withProjectionExpression("latitude, longitude, number, pickup, state, type, zip")
-					.withKeyConditionExpression(
-							"#latitude = :latMin and #longitude BETWEEN :lonMin AND :lonMax")
-					.withNameMap(nameMap).withValueMap(valueMap);
-			ItemCollection<QueryOutcome> items = null;
-			Iterator<Item> iterator = null;
-			Item item = null;
-
-			logger.debug("Number of store locations :{}");
-			items = table.query(querySpec);
-
-			iterator = items.iterator();
-			while (iterator.hasNext()) {
-				item = iterator.next();
-				logger.debug("Locations retrived :{} : {}", item.getDouble(_LONGITUDE), item.getDouble(_LATITUDE));
-				selectedLocations.add(
-						new LocationMaster(item.getDouble(_LONGITUDE), item.getDouble(_LATITUDE), item.getString(_TYPE),
-								item.getString(_LOCATIONNUMBER), item.getDouble(_PICKUP), item.getString(_ZIP)));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InternalServerError("Unable to query:" + locationTable);
-		}
-
-		logger.debug("Number of location found {}.", selectedLocations.size());
-		
-		return selectedLocations;
-	}
-
+	/*
+	 * public HashSet<LocationMaster> getLocations(double lat, double lon, double
+	 * range) throws InternalServerError {
+	 * 
+	 * HashSet<LocationMaster> selectedLocations = new HashSet<LocationMaster>();
+	 * try { AmazonDynamoDB client = getDaxConnection(); DynamoDB dynamoDB = new
+	 * DynamoDB(client);
+	 * 
+	 * Table table = dynamoDB.getTable(locationTable);
+	 * 
+	 * double latMin = lat - range; double latMax = lat + range; double lonMin = lon
+	 * - range; double lonMax = lon + range;
+	 * 
+	 * logger.debug("latMin :{}  latMax: {}", latMin, latMax);
+	 * logger.debug("lonMin :{}  lonMax: {}", lonMin, lonMax);
+	 * 
+	 * HashMap<String, String> nameMap = new HashMap<String, String>();
+	 * nameMap.put("#latitude", "latitude"); nameMap.put("#longitude", "longitude");
+	 * 
+	 * HashMap<String, Object> valueMap = new HashMap<String, Object>();
+	 * valueMap.put(":latMin", latMin); //valueMap.put(":latMax", latMax);
+	 * valueMap.put(":lonMin", lonMin); valueMap.put(":lonMax", lonMax);
+	 * 
+	 * QuerySpec querySpec = new QuerySpec();
+	 * 
+	 * querySpec.
+	 * withProjectionExpression("latitude, longitude, number, pickup, state, type, zip"
+	 * ) .withKeyConditionExpression(
+	 * "#latitude = :latMin and #longitude BETWEEN :lonMin AND :lonMax")
+	 * .withNameMap(nameMap).withValueMap(valueMap); ItemCollection<QueryOutcome>
+	 * items = null; Iterator<Item> iterator = null; Item item = null;
+	 * 
+	 * logger.debug("Number of store locations :{}"); items =
+	 * table.query(querySpec);
+	 * 
+	 * iterator = items.iterator(); while (iterator.hasNext()) { item =
+	 * iterator.next(); logger.debug("Locations retrived :{} : {}",
+	 * item.getDouble(_LONGITUDE), item.getDouble(_LATITUDE));
+	 * selectedLocations.add( new LocationMaster(item.getDouble(_LONGITUDE),
+	 * item.getDouble(_LATITUDE), item.getString(_TYPE),
+	 * item.getString(_LOCATIONNUMBER), item.getDouble(_PICKUP),
+	 * item.getString(_ZIP))); }
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); throw new
+	 * InternalServerError("Unable to query:" + locationTable); }
+	 * 
+	 * logger.debug("Number of location found {}.", selectedLocations.size());
+	 * 
+	 * return selectedLocations; }
+	 */
 	private static double distance(double lat1, double lon1, double lat2, double lon2) {
 		if ((lat1 == lat2) && (lon1 == lon2)) {
 			return 0;
@@ -222,30 +249,48 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 			throws JsonMappingException, JsonProcessingException {
 		LambdaRequest req = new LambdaRequest();
 		String body = mapper.writeValueAsString(reqInv);
-		logger.debug("invokeLambda(InventoryFunction, req) request {}.",body);
+		logger.debug("invokeLambda(InventoryFunction, req) request {}.", body);
 		req.setBody(body);
 		req.setMethod("POST");
 		req.setPath("/inventory/quantity");
 		LambdaResponse resMod = invokeLambda(InventoryFunction, req);
-		logger.debug("invokeLambda(InventoryFunction, req) result {}.",resMod != null?  resMod.getBody():resMod);
-		InventoryAvailableResponse inventoryRequest = null;
+		logger.debug("invokeLambda(InventoryFunction, req) result {}.", resMod != null ? resMod.getBody() : resMod);
+		InventoryAvailableResponse inventoryRes = null;
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
-			inventoryRequest = mapper.readValue(resMod.getBody(), InventoryAvailableResponse.class);
+			inventoryRes = mapper.readValue(resMod.getBody(), InventoryAvailableResponse.class);
 		}
-		return inventoryRequest;
+		return inventoryRes;
+	}
+
+	public GeoStoreResponse getGeoLocationLambda(GeoLocationRequest reqGeo)
+			throws JsonMappingException, JsonProcessingException {
+		LambdaRequest req = new LambdaRequest();
+		String body = mapper.writeValueAsString(reqGeo);
+		logger.debug("invokeLambda(GeoLocationFunction, req) request {}.", body);
+		req.setBody(body);
+		req.setMethod("POST");
+		req.setPath("/geo/locations");
+		LambdaResponse resMod = invokeLambda(GeoLocationFunction, req);
+		logger.debug("invokeLambda(GeoLocationFunction, req) result {}.", resMod != null ? resMod.getBody() : resMod);
+		GeoStoreResponse geoResponse = null;
+		if (resMod != null) {
+			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
+			geoResponse = mapper.readValue(resMod.getBody(), GeoStoreResponse.class);
+		}
+		return geoResponse;
 	}
 
 	public DeliveryDateResponse getDDambda(DeliveryDateRequest reqDD)
 			throws JsonMappingException, JsonProcessingException {
 		LambdaRequest req = new LambdaRequest();
 		String body = mapper.writeValueAsString(reqDD);
-		logger.debug("invokeLambda(ddFunction, req) request {}.",body);
+		logger.debug("invokeLambda(ddFunction, req) request {}.", body);
 		req.setBody(body);
 		req.setMethod("POST");
 		req.setPath("/inventory/deliverydate");
 		LambdaResponse resMod = invokeLambda(ddFunction, req);
-		logger.debug("invokeLambda(ddFunction, req) result {}.", resMod != null?  resMod.getBody():resMod);
+		logger.debug("invokeLambda(ddFunction, req) result {}.", resMod != null ? resMod.getBody() : resMod);
 		DeliveryDateResponse res = null;
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);

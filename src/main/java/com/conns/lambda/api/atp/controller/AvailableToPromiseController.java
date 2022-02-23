@@ -95,7 +95,9 @@ public class AvailableToPromiseController extends RequestController {
 		logger.debug("Request Body Mapped with sku list {}", atpRequest.getProducts());
 
 		
-		LocationDTO locationDTO = dao.getLocations(atpRequest.getLatitude(), atpRequest.getLongitude());
+		LocationDTO locationDTO = dao.getLocationsUsingLambda(atpRequest.getReqID(), atpRequest.getLatitude(), atpRequest.getLongitude());
+		
+		//LocationDTO locationDTO = dao.getLocations(atpRequest.getLatitude(), atpRequest.getLongitude());
 
 		final AvailableToPromiseRequest atpReq = atpRequest;
 		

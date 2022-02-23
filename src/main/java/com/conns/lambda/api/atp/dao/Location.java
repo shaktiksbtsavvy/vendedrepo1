@@ -1,6 +1,7 @@
 package com.conns.lambda.api.atp.dao;
 
 import com.conns.lambda.api.atp.dao.AvailableToPromiseDao.LocationMaster;
+import com.conns.lambda.api.atp.model.geo.StoreResponse;
 
 public  class Location implements Comparable<Location>{
 	/**
@@ -25,6 +26,10 @@ public  class Location implements Comparable<Location>{
 	
 	public Location(LocationMaster lm, Double distance) {
 		this(lm.getLatitude(), lm.getLongitude(), lm.getType(),lm.getLocationNumber(), distance, lm.getZip());
+	}
+	
+	public Location(StoreResponse sr) {
+		this(sr.getLatitude(), sr.getLongitude(), sr.getType(),sr.getStoreId(), sr.getStoreDistance(), sr.getStoreZip());
 	}
 	
 	/**

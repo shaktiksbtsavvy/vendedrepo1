@@ -53,17 +53,20 @@ Mappings:
       FUNMEMORYSIZE: 10240
       INVENTORYFUN: InventoryApi-Dev
       DDFUN: DeliveryDateApi-Dev
+      GEOLOCATIONFUN: GeoLocationApi-Dev
       LOCATIONTABLE: TST_CONNS_LOCATION
     UAT: 
       FUNMEMORYSIZE: 10240
       INVENTORYFUN: InventoryApi-UAT
       DDFUN: DeliveryDateApi-UAT
+      GEOLOCATIONFUN: GeoLocationApi-UAT
       LOCATIONTABLE: UAT_CONNS_LOCATION
     Prod: 
       FUNMEMORYSIZE: 10240
-      INVENTORYFUN: InventoryApi-UAT
-      DDFUN: DeliveryDateApi-UAT
-      LOCATIONTABLE: UAT_CONNS_LOCATION
+      INVENTORYFUN: InventoryApi-Prod
+      DDFUN: DeliveryDateApi-Prod
+      GEOLOCATIONFUN: GeoLocationApi-Prod
+      LOCATIONTABLE: PRD_CONNS_LOCATION
   RegionMap: 
     us-east-1: 
       SECURITYGROUPID: [sg-08b41ec1af2f1a000]
@@ -124,6 +127,10 @@ Resources:
             - EnvMap
             - !Ref StageName
             - DDFUN
+          GEOLOCATIONFUN: !FindInMap
+            - EnvMap
+            - !Ref StageName
+            - GEOLOCATIONFUN
           DAXENDPOINT:  !If [CreateEastResources, !FindInMap [EastRegEnvMap, !Ref StageName, DAXENDPOINT], !FindInMap [WestRegEnvMap, !Ref StageName, DAXENDPOINT]]
           LOCATIONTABLE: !FindInMap
             - EnvMap

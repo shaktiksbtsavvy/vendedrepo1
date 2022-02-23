@@ -105,7 +105,14 @@ public class ResponseBuilder {
 				for (LocationResponse lr : pr.getLocations()) {
 					logger.debug("7-LocationResponse: {}.", lr != null ? lr.toString() : "");
 					if (lr != null && lr.getLocationType().equalsIgnoreCase(_STR)) {
+
 						Location loc = storeLocations.get(lr.getLocationNumber());
+						// The below WH data is for Pickup from different WH
+						/*
+						if (loc == null) { 
+							loc = whLocations.get(lr.getLocationNumber());
+						}
+						*/
 						logger.debug("8-Selected store location: {}.", loc != null ? loc.toString() : "");
 						if (loc != null) {
 							// pickupAtp.add(new PickupATPResponse(skuName, getTodayInCST(),

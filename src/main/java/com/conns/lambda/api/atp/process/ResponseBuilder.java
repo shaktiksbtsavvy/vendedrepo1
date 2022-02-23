@@ -108,11 +108,11 @@ public class ResponseBuilder {
 
 						Location loc = storeLocations.get(lr.getLocationNumber());
 						// The below WH data is for Pickup from different WH
-						/*
+						
 						if (loc == null) { 
 							loc = whLocations.get(lr.getLocationNumber());
 						}
-						*/
+						
 						logger.debug("8-Selected store location: {}.", loc != null ? loc.toString() : "");
 						if (loc != null) {
 							// pickupAtp.add(new PickupATPResponse(skuName, getTodayInCST(),

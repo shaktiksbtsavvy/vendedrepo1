@@ -221,11 +221,13 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	public InventoryAvailableResponse getInventoryLambda(InventoryAvailableRequest reqInv)
 			throws JsonMappingException, JsonProcessingException {
 		LambdaRequest req = new LambdaRequest();
-		req.setBody(mapper.writeValueAsString(reqInv));
+		String body = mapper.writeValueAsString(reqInv);
+		logger.debug("invokeLambda(InventoryFunction, req) request {}.",body);
+		req.setBody(body);
 		req.setMethod("POST");
 		req.setPath("/inventory/quantity");
 		LambdaResponse resMod = invokeLambda(InventoryFunction, req);
-		logger.debug("getInventoryLambda result {}.", resMod);
+		logger.debug("invokeLambda(InventoryFunction, req) result {}.",resMod != null?  resMod.getBody():resMod);
 		InventoryAvailableResponse inventoryRequest = null;
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
@@ -237,11 +239,13 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	public DeliveryDateResponse getDDambda(DeliveryDateRequest reqDD)
 			throws JsonMappingException, JsonProcessingException {
 		LambdaRequest req = new LambdaRequest();
-		req.setBody(mapper.writeValueAsString(reqDD));
+		String body = mapper.writeValueAsString(reqDD);
+		logger.debug("invokeLambda(ddFunction, req) request {}.",body);
+		req.setBody(body);
 		req.setMethod("POST");
 		req.setPath("/inventory/deliverydate");
 		LambdaResponse resMod = invokeLambda(ddFunction, req);
-		logger.debug("getDDambda result {}.", resMod);
+		logger.debug("invokeLambda(ddFunction, req) result {}.", resMod != null?  resMod.getBody():resMod);
 		DeliveryDateResponse res = null;
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);

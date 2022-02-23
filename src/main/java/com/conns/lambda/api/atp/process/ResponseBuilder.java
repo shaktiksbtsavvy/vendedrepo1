@@ -55,8 +55,7 @@ public class ResponseBuilder {
 	 * @throws InvalidRequestException
 	 */
 	public ResponseBody buildResponseObject(AvailableToPromiseRequest request, InventoryAvailableResponse invRes,
-			DeliveryDateResponse ddRes, LocationDTO locationDTO )
-			throws InvalidRequestException {
+			DeliveryDateResponse ddRes, LocationDTO locationDTO) throws InvalidRequestException {
 		return buildResponseObject(HTTP_200, SUCCESS, request, invRes, ddRes, locationDTO);
 	}
 
@@ -69,8 +68,8 @@ public class ResponseBuilder {
 	 * @return
 	 */
 	protected ResponseBody buildResponseObject(int code, String message, AvailableToPromiseRequest request,
-			InventoryAvailableResponse invRes, DeliveryDateResponse ddRes, LocationDTO locationDTO ) {
-		
+			InventoryAvailableResponse invRes, DeliveryDateResponse ddRes, LocationDTO locationDTO) {
+
 		logger.debug("1-Starting build response.");
 		AvailableToPromiseResponse tiwResponse = new AvailableToPromiseResponse();
 		tiwResponse.setReqID(request.getReqID());
@@ -78,49 +77,54 @@ public class ResponseBuilder {
 		tiwResponse.setMessage(message);
 		HashMap<String, Location> storeLocations = locationDTO.getStoreLocations();
 		HashMap<String, Location> whLocations = locationDTO.getWhLocations();
-		
+
 		debugList("2-Store Locations", storeLocations.values());
 		debugList("3-Warehouse Locations", whLocations.values());
-		
+
 		List<PickupATPResponse> pickupAtp = new ArrayList<PickupATPResponse>();
 		List<DeliveryATPResponse> deliveryAtp = new ArrayList<DeliveryATPResponse>();
-		
+
 		tiwResponse.setPickupAtp(pickupAtp);
 		tiwResponse.setDeliveryAtp(deliveryAtp);
 		NextDeliveryDateResponse nddr = ddRes.getData() != null && ddRes.getData().size() > 0 ? ddRes.getData().get(0)
 				: null;
-		
-		logger.debug("4-NextDeliveryDateResponse {}", nddr!= null? nddr.toString():"");
-		
+
+		logger.debug("4-NextDeliveryDateResponse {}", nddr != null ? nddr.toString() : "");
+
 		List<ProductResponse> productResponseList = invRes.getData();
 		debugList("5-productResponseList", productResponseList);
-		
+
 		HashMap<String, String> nextDDDate = getPObySKU(ddRes);
-		for (ProductResponse pr : productResponseList) {
-			String skuName = pr.getSKU();
-			logger.debug("6-skuName: {}.", skuName);
-			for (LocationResponse lr : pr.getLocations()) {
-				logger.debug("7-LocationResponse: {}.", lr != null? lr.toString(): "");
-				if (lr != null && lr.getLocationType().equalsIgnoreCase(_STR)) {
-					Location loc = storeLocations.get(lr.getLocationNumber());
-					logger.debug("8-Selected store location: {}.", loc!= null? loc.toString():"");
-					//pickupAtp.add(new PickupATPResponse(skuName,  getTodayInCST(), lr.getQtyAvailable()));
-					pickupAtp.add(new PickupATPResponse(skuName,lr.getLocationType(), loc.getLongitude(), loc.getLatitude(), lr.getLocationNumber(),
-							loc.getDistance(), lr.getQtyAvailable(), getTodayInCST()));
-				} else if (lr != null && lr.getLocationType().equalsIgnoreCase(_WH)) {
-					String dateAvailble = null;
-					Location loc = whLocations.get(lr.getLocationNumber());
-					logger.debug("8-Selected warehouse location: {}.", loc!= null? loc.toString():"");
-					if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
-						dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
-					} else {
-						dateAvailble = nextDDDate.get(skuName);
+		if (productResponseList.size() > 0) {
+			for (ProductResponse pr : productResponseList) {
+				String skuName = pr.getSKU();
+				logger.debug("6-skuName: {}.", skuName);
+				for (LocationResponse lr : pr.getLocations()) {
+					logger.debug("7-LocationResponse: {}.", lr != null ? lr.toString() : "");
+					if (lr != null && lr.getLocationType().equalsIgnoreCase(_STR)) {
+						Location loc = storeLocations.get(lr.getLocationNumber());
+						logger.debug("8-Selected store location: {}.", loc != null ? loc.toString() : "");
+						// pickupAtp.add(new PickupATPResponse(skuName, getTodayInCST(),
+						// lr.getQtyAvailable()));
+						pickupAtp.add(new PickupATPResponse(skuName, lr.getLocationType(), loc.getLongitude(),
+								loc.getLatitude(), lr.getLocationNumber(), loc.getDistance(), lr.getQtyAvailable(),
+								getTodayInCST()));
+					} else if (lr != null && lr.getLocationType().equalsIgnoreCase(_WH)) {
+						String dateAvailble = null;
+						Location loc = whLocations.get(lr.getLocationNumber());
+						logger.debug("8-Selected warehouse location: {}.", loc != null ? loc.toString() : "");
+						if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
+							dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
+						} else {
+							dateAvailble = nextDDDate.get(skuName);
+						}
+						logger.debug("9-dateAvailble: {}.", dateAvailble);
+						deliveryAtp.add(
+								new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(), dateAvailble));
 					}
-					logger.debug("9-dateAvailble: {}.", dateAvailble);
-					deliveryAtp.add(new DeliveryATPResponse(skuName,request.getZip(), lr.getQtyAvailable(), dateAvailble));
 				}
+
 			}
-			
 		}
 
 		return tiwResponse;
@@ -130,16 +134,16 @@ public class ResponseBuilder {
 		List objList = new ArrayList(coll);
 		debugList(message, objList);
 	}
-	
+
 	private void debugList(String message, List objList) {
-		logger.debug("Starting printing:" +message);
-		if(objList != null) {
-			for(Object o: objList) {
+		logger.debug("Starting printing:" + message);
+		if (objList != null) {
+			for (Object o : objList) {
 				logger.debug(o.toString());
 			}
 		}
 	}
-	
+
 	private HashMap<String, String> getPObySKU(DeliveryDateResponse ddRes) {
 		List<NextDeliveryDateResponse> nddrList = ddRes.getData();
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -152,7 +156,6 @@ public class ResponseBuilder {
 		return map;
 	}
 
-
 	private String getTodayInCST() {
 		Calendar currentdate = Calendar.getInstance();
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -162,6 +165,5 @@ public class ResponseBuilder {
 		String today = formatter.format(currentdate.getTime());
 		return today;
 	}
-	
-	
+
 }

@@ -59,6 +59,9 @@ public class AvailableToPromiseController extends RequestController {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.conns.lambda.common.controller.RequestController#handleRequest(com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent, com.conns.lambda.common.http.ApiResponseHeader)
+	 */
 	@Override
 	public ResponseBody handleRequest(APIGatewayProxyRequestEvent apiRequest, ApiResponseHeader headers)
 			throws InternalServerError, InvalidRequestException {
@@ -98,6 +101,9 @@ public class AvailableToPromiseController extends RequestController {
 		
 		
 		CompletableFuture<InventoryAvailableResponse> inventoryLambdaFuture = CompletableFuture.supplyAsync(() -> getInventoryAvailable(locationDTO,atpReq));
+//		if(locationDTO.getDLLocation()== null || locationDTO.getDLLocation() == "") {
+//			throw new InvalidRequestException("No warehouse found with in the delivery radius.");
+//		}
 		CompletableFuture<DeliveryDateResponse> ddLambdaFuture = CompletableFuture.supplyAsync(() -> getDeliveryDate(locationDTO,atpReq));
 		InventoryAvailableResponse invRes = null;
 		DeliveryDateResponse ddRes = null;

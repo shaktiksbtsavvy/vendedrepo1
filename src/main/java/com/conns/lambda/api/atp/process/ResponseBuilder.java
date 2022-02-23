@@ -77,6 +77,9 @@ public class ResponseBuilder {
 		tiwResponse.setMessage(message);
 		HashMap<String, Location> storeLocations = locationDTO.getStoreLocations();
 		HashMap<String, Location> whLocations = locationDTO.getWhLocations();
+		
+		logger.debug("storeLocations size:{}"+ storeLocations != null? storeLocations.size() : storeLocations);
+		logger.debug("whLocations size:{}"+ whLocations != null? whLocations.size() : whLocations);
 
 		debugList("2-Store Locations", storeLocations.values());
 		debugList("3-Warehouse Locations", whLocations.values());

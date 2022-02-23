@@ -1,9 +1,10 @@
 package com.conns.lambda.api.atp.model.dd;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PurchaseOrder {
 	/**
 	 * 

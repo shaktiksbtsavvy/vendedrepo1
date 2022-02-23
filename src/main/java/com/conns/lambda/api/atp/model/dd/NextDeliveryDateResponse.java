@@ -3,11 +3,13 @@ package com.conns.lambda.api.atp.model.dd;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 
 @JsonPropertyOrder({ "SKU", "Locations"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class NextDeliveryDateResponse {
 	
 	/**

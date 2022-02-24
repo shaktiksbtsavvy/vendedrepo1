@@ -1,8 +1,9 @@
 package com.conns.lambda.api.atp.response;
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PickupATPResponse {
+public class PickupATPResponse  implements Comparable<PickupATPResponse> {
 	
 	/**
 	 * @param sku
@@ -242,6 +243,19 @@ public class PickupATPResponse {
 
 	public void setAddressCity(String addressCity) {
 		this.addressCity = addressCity;
+	}
+
+	@Override
+	public int compareTo(PickupATPResponse location) {
+		Double compareDistance = location.getDistance(); 
+		if( this.distance >  compareDistance) {
+			return 1;
+		}
+		else if( this.distance <  compareDistance) {
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 
 	

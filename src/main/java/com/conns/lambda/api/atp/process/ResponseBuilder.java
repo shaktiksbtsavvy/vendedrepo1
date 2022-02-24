@@ -142,7 +142,7 @@ public class ResponseBuilder {
 
 			}
 		}
-
+		tiwResponse.sort();
 		return tiwResponse;
 	}
 

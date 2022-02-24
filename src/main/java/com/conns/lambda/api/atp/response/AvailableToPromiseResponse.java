@@ -1,5 +1,6 @@
 package com.conns.lambda.api.atp.response;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.conns.lambda.common.http.ResponseBody;
@@ -70,5 +71,9 @@ public class AvailableToPromiseResponse extends ResponseBody{
 		this.pickupAtp = pickupAtp;
 	}
 
+	
+	public void sort() {
+		Collections.sort(pickupAtp);
+	}
 	
 }

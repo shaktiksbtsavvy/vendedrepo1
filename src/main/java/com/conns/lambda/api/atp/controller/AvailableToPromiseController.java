@@ -148,6 +148,9 @@ public class AvailableToPromiseController extends RequestController {
 		if (atpRequest.getLongitude() == null || atpRequest.getLongitude().length() == 0) {
 			throwInvalidRequestException("Longitude is required.");
 		}
+		if (atpRequest.getZip() == null || atpRequest.getZip() .length() == 0) {
+			throwInvalidRequestException("Zipcode is required.");
+		}
 
 	}
 

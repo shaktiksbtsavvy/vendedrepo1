@@ -69,7 +69,7 @@ Mappings:
       DDFUN: DeliveryDateApi-Prod
       GEOLOCATIONFUN: GeoLocationApi-Prod
       LOCATIONTABLE: PRD_CONNS_LOCATION
-      PROVISIONEDCONCURRECY: 5
+      PROVISIONEDCONCURRECY: 2
   RegionMap: 
     us-east-1: 
       SECURITYGROUPID: [sg-08b41ec1af2f1a000]

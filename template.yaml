@@ -55,18 +55,21 @@ Mappings:
       DDFUN: DeliveryDateApi-Dev
       GEOLOCATIONFUN: GeoLocationApi-Dev
       LOCATIONTABLE: TST_CONNS_LOCATION
+      PROVISIONEDCONCURRECY: 1
     UAT: 
       FUNMEMORYSIZE: 10240
       INVENTORYFUN: InventoryApi-UAT
       DDFUN: DeliveryDateApi-UAT
       GEOLOCATIONFUN: GeoLocationApi-UAT
       LOCATIONTABLE: UAT_CONNS_LOCATION
+      PROVISIONEDCONCURRECY: 1
     Prod: 
       FUNMEMORYSIZE: 10240
       INVENTORYFUN: InventoryApi-Prod
       DDFUN: DeliveryDateApi-Prod
       GEOLOCATIONFUN: GeoLocationApi-Prod
       LOCATIONTABLE: PRD_CONNS_LOCATION
+      PROVISIONEDCONCURRECY: 5
   RegionMap: 
     us-east-1: 
       SECURITYGROUPID: [sg-08b41ec1af2f1a000]
@@ -84,6 +87,9 @@ Resources:
       Handler: com.conns.lambda.api.atp.AvailableToPromiseHandler::handleRequest
       Runtime: java11
       PackageType: Zip
+      AutoPublishAlias: live
+      ProvisionedConcurrencyConfig:
+        ProvisionedConcurrentExecutions: !FindInMap [EnvMap, !Ref StageName, PROVISIONEDCONCURRECY]
       Policies:
       - Statement:
         - Sid: DAXLambdaAccessPolicy

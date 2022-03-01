@@ -261,7 +261,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
 			inventoryRes = mapper.readValue(resMod.getBody(), InventoryAvailableResponse.class);
-			if(!inventoryRes.getMessage().equalsIgnoreCase(SUCCESS)) {
+			if(inventoryRes.getMessage() != null && !inventoryRes.getMessage().equalsIgnoreCase(SUCCESS)) {
 				throw new InternalServerError("Error invoking  getGeoLocationLambda {}", inventoryRes.getErrorDetails());
 			}
 		}
@@ -282,7 +282,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
 			geoResponse = mapper.readValue(resMod.getBody(), GeoStoreResponse.class);
-			if(!geoResponse.getMessage().equalsIgnoreCase(SUCCESS)) {
+			if( geoResponse.getMessage() != null && !geoResponse.getMessage().equalsIgnoreCase(SUCCESS)) {
 				throw new InternalServerError("Error invoking  getGeoLocationLambda {}", geoResponse.getErrorDetails());
 			}
 		}
@@ -303,7 +303,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
 			res = mapper.readValue(resMod.getBody(), DeliveryDateResponse.class);
-			if(!res.getMessage().equalsIgnoreCase(SUCCESS)) {
+			if(res.getMessage() != null && !res.getMessage().equalsIgnoreCase(SUCCESS)) {
 				throw new InternalServerError("Error invoking  getGeoLocationLambda {}", res.getErrorDetails());
 			}
 		}

@@ -124,9 +124,9 @@ public class ResponseBuilder {
 
 					} else if (lr != null && lr.getLocationType().equalsIgnoreCase(_WH)) {
 						String dateAvailble = null;
-						Location loc = whLocations.get(lr.getLocationNumber());
-						logger.debug("8-Selected warehouse location: {}.", loc != null ? loc.toString() : "");
-						if (loc != null) {
+						//Location loc = whLocations.get(lr.getLocationNumber());
+						//logger.debug("8-Selected warehouse location: {}.", loc != null ? loc.toString() : "");
+						//if (loc != null) {
 							if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
 								dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
 							} else {
@@ -135,7 +135,7 @@ public class ResponseBuilder {
 							logger.debug("9-dateAvailble: {}.", dateAvailble);
 							deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
 									dateAvailble));
-						}
+						//}
 
 					}
 				}

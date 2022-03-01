@@ -186,7 +186,7 @@ public class AvailableToPromiseController extends RequestController {
 		DeliveryDateRequest ddRequest = new DeliveryDateRequest();
 		ddRequest.setReqID(atpRequest.getReqID());
 		ddRequest.setDL_Location(locationDTO.getDLLocation());
-		ddRequest.setZipcode(locationDTO.getDLZip()); ///Request zip or location Zip
+		ddRequest.setZipcode(atpRequest.getZip()); ///Request zip or location Zip
 		ddRequest.setSKU(atpRequest.getProducts());
 		DeliveryDateResponse ddRes = null;
 		logger.debug("DeliveryDateRequest to DD Lambda: {}", ddRequest);

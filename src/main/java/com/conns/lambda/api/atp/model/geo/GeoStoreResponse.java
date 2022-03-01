@@ -30,6 +30,7 @@ public class GeoStoreResponse extends ResponseBody{
 	List<StoreResponse> stores;
 	int code;
 	String message;
+	private String errorDetails;
 
 	public List<StoreResponse> getStores() {
 		return stores;
@@ -37,6 +38,30 @@ public class GeoStoreResponse extends ResponseBody{
 
 	public void setStores(List<StoreResponse> stores) {
 		this.stores = stores;
+	}
+
+	public int getCode() {
+		return code;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public String getErrorDetails() {
+		return errorDetails;
+	}
+
+	public void setErrorDetails(String errorDetails) {
+		this.errorDetails = errorDetails;
 	}
 	
 	

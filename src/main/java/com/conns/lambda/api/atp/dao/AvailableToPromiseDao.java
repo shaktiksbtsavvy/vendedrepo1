@@ -51,8 +51,8 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 			? System.getenv(_DISTANCETHRESHOLD).trim()
 			: null; // _LOCATIONTABLE
 
-	private static final String _STORETYPE = "Store";
-	private static final String _WHTYPE = "Warehouse";
+	private static final String _STORETYPE = "STR";
+	private static final String _WHTYPE = "WH";
 
 	private static final String InventoryFunction = System.getenv(_INVENTORYFUN) != null
 			? System.getenv(_INVENTORYFUN).trim()
@@ -63,6 +63,8 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	private static final String ddFunction = System.getenv(_DDFUN) != null ? System.getenv(_DDFUN).trim() : null; // INVTABLENAME
 
 	private static final AWSLambda awsLambda = AWSLambdaClientBuilder.standard().build();
+	
+	protected static final String SUCCESS = "Success";
 
 	public AvailableToPromiseDao() {
 		try {
@@ -246,7 +248,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	}
 
 	public InventoryAvailableResponse getInventoryLambda(InventoryAvailableRequest reqInv)
-			throws JsonMappingException, JsonProcessingException {
+			throws JsonMappingException, JsonProcessingException, InternalServerError {
 		LambdaRequest req = new LambdaRequest();
 		String body = mapper.writeValueAsString(reqInv);
 		logger.debug("invokeLambda(InventoryFunction, req) request {}.", body);
@@ -259,12 +261,15 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
 			inventoryRes = mapper.readValue(resMod.getBody(), InventoryAvailableResponse.class);
+			if(!inventoryRes.getMessage().equalsIgnoreCase(SUCCESS)) {
+				throw new InternalServerError("Error invoking  getGeoLocationLambda {}", inventoryRes.getErrorDetails());
+			}
 		}
 		return inventoryRes;
 	}
 
 	public GeoStoreResponse getGeoLocationLambda(GeoLocationRequest reqGeo)
-			throws JsonMappingException, JsonProcessingException {
+			throws JsonMappingException, JsonProcessingException, InternalServerError {
 		LambdaRequest req = new LambdaRequest();
 		String body = mapper.writeValueAsString(reqGeo);
 		logger.debug("invokeLambda(GeoLocationFunction, req) request {}.", body);
@@ -277,12 +282,15 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
 			geoResponse = mapper.readValue(resMod.getBody(), GeoStoreResponse.class);
+			if(!geoResponse.getMessage().equalsIgnoreCase(SUCCESS)) {
+				throw new InternalServerError("Error invoking  getGeoLocationLambda {}", geoResponse.getErrorDetails());
+			}
 		}
 		return geoResponse;
 	}
 
 	public DeliveryDateResponse getDDambda(DeliveryDateRequest reqDD)
-			throws JsonMappingException, JsonProcessingException {
+			throws JsonMappingException, JsonProcessingException, InternalServerError {
 		LambdaRequest req = new LambdaRequest();
 		String body = mapper.writeValueAsString(reqDD);
 		logger.debug("invokeLambda(ddFunction, req) request {}.", body);
@@ -295,6 +303,9 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
 			res = mapper.readValue(resMod.getBody(), DeliveryDateResponse.class);
+			if(!res.getMessage().equalsIgnoreCase(SUCCESS)) {
+				throw new InternalServerError("Error invoking  getGeoLocationLambda {}", res.getErrorDetails());
+			}
 		}
 		return res;
 	}

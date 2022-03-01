@@ -35,6 +35,7 @@ public class InventoryAvailableResponse extends ResponseBody{
 	private String message;
 	private String reqID;
 	private List<ProductResponse> data;
+	private String errorDetails;
 	
 	@JsonGetter("code")
 	public int getCode() {
@@ -80,6 +81,14 @@ public class InventoryAvailableResponse extends ResponseBody{
 	public String toString() {
 		return "InventoryAvailableResponse [code=" + code + ", message=" + message + ", reqID=" + reqID + ", data="
 				+ data + "]";
+	}
+
+	public String getErrorDetails() {
+		return errorDetails;
+	}
+
+	public void setErrorDetails(String errorDetails) {
+		this.errorDetails = errorDetails;
 	}
 	
 }

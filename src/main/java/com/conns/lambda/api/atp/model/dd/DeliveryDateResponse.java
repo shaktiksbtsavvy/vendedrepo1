@@ -36,6 +36,7 @@ public class DeliveryDateResponse extends ResponseBody{
 	private String message;
 	private String reqID;
 	private List<NextDeliveryDateResponse> data;
+	private String errorDetails;
 	
 	@JsonGetter("code")
 	public int getCode() {
@@ -81,6 +82,14 @@ public class DeliveryDateResponse extends ResponseBody{
 	public String toString() {
 		return "DeliveryDateResponse [code=" + code + ", message=" + message + ", reqID=" + reqID + ", data=" + data
 				+ "]";
+	}
+
+	public String getErrorDetails() {
+		return errorDetails;
+	}
+
+	public void setErrorDetails(String errorDetails) {
+		this.errorDetails = errorDetails;
 	}
 	
 }

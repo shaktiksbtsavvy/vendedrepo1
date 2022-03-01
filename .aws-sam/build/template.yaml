@@ -60,10 +60,10 @@ Mappings:
       POLICYDDBRESOURCE:
       - arn:aws:dynamodb:us-west-1:203315843709:table/TST_CONNS_LOCATION
     UAT:
-      DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com
-      POLICYDAXRESOURCE: arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev
+      DAXENDPOINT: daxs://dax-api-cluster-uat.8hlusu.dax-clusters.us-west-1.amazonaws.com
+      POLICYDAXRESOURCE: arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-uat
       POLICYDDBRESOURCE:
-      - arn:aws:dynamodb:us-west-1:203315843709:table/TST_CONNS_LOCATION
+      - arn:aws:dynamodb:us-west-1:203315843709:table/UAT_CONNS_LOCATION
     Prod:
       DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com
       POLICYDAXRESOURCE: arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev
@@ -74,17 +74,23 @@ Mappings:
       FUNMEMORYSIZE: 10240
       INVENTORYFUN: InventoryApi-Dev
       DDFUN: DeliveryDateApi-Dev
+      GEOLOCATIONFUN: GeoLocationApi-Dev
       LOCATIONTABLE: TST_CONNS_LOCATION
+      PROVISIONEDCONCURRECY: 1
     UAT:
       FUNMEMORYSIZE: 10240
       INVENTORYFUN: InventoryApi-UAT
       DDFUN: DeliveryDateApi-UAT
+      GEOLOCATIONFUN: GeoLocationApi-UAT
       LOCATIONTABLE: UAT_CONNS_LOCATION
+      PROVISIONEDCONCURRECY: 1
     Prod:
       FUNMEMORYSIZE: 10240
-      INVENTORYFUN: InventoryApi-UAT
-      DDFUN: DeliveryDateApi-UAT
-      LOCATIONTABLE: UAT_CONNS_LOCATION
+      INVENTORYFUN: InventoryApi-Prod
+      DDFUN: DeliveryDateApi-Prod
+      GEOLOCATIONFUN: GeoLocationApi-Prod
+      LOCATIONTABLE: PRD_CONNS_LOCATION
+      PROVISIONEDCONCURRECY: 2
   RegionMap:
     us-east-1:
       SECURITYGROUPID:
@@ -113,6 +119,13 @@ Resources:
       Handler: com.conns.lambda.api.atp.AvailableToPromiseHandler::handleRequest
       Runtime: java11
       PackageType: Zip
+      AutoPublishAlias: live
+      ProvisionedConcurrencyConfig:
+        ProvisionedConcurrentExecutions:
+          Fn::FindInMap:
+          - EnvMap
+          - Ref: StageName
+          - PROVISIONEDCONCURRECY
       Policies:
       - Statement:
         - Sid: DAXLambdaAccessPolicy
@@ -157,6 +170,12 @@ Resources:
             - EnvMap
             - Ref: StageName
             - DDFUN
+      - LambdaInvokePolicy:
+          FunctionName:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - GEOLOCATIONFUN
       VpcConfig:
         SecurityGroupIds:
           Fn::FindInMap:
@@ -178,7 +197,7 @@ Resources:
           VERSION: 1.0
           RESTART: 1.0
           LOG_LEVEL: DEBUG
-          DISTANCETHRESHOLD: 125
+          DISTANCETHRESHOLD: 200
           INVENTORYFUN:
             Fn::FindInMap:
             - EnvMap
@@ -189,6 +208,11 @@ Resources:
             - EnvMap
             - Ref: StageName
             - DDFUN
+          GEOLOCATIONFUN:
+            Fn::FindInMap:
+            - EnvMap
+            - Ref: StageName
+            - GEOLOCATIONFUN
           DAXENDPOINT:
             Fn::If:
             - CreateEastResources

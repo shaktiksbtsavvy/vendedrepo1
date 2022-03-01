@@ -161,7 +161,7 @@ public class AvailableToPromiseController extends RequestController {
 		invRequest.setPU_Location(locationDTO.getPULocations());
 		invRequest.setSKU(atpRequest.getProducts());
 		invRequest.setZipcode(atpRequest.getZip());
-		InventoryAvailableResponse invRes;
+		InventoryAvailableResponse invRes = null;
 		logger.debug("InventoryAvailableRequest to Inventory Lambda: {}", invRequest);
 		try {
 			invRes = dao.getInventoryLambda(invRequest);
@@ -171,6 +171,10 @@ public class AvailableToPromiseController extends RequestController {
 			e.printStackTrace();
 			throw new CompletionException(e);
 		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new CompletionException(e);
+		} catch (InternalServerError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new CompletionException(e);
@@ -184,7 +188,7 @@ public class AvailableToPromiseController extends RequestController {
 		ddRequest.setDL_Location(locationDTO.getDLLocation());
 		ddRequest.setZipcode(locationDTO.getDLZip()); ///Request zip or location Zip
 		ddRequest.setSKU(atpRequest.getProducts());
-		DeliveryDateResponse ddRes;
+		DeliveryDateResponse ddRes = null;
 		logger.debug("DeliveryDateRequest to DD Lambda: {}", ddRequest);
 		try {
 			ddRes = dao.getDDambda(ddRequest);
@@ -193,6 +197,10 @@ public class AvailableToPromiseController extends RequestController {
 			e.printStackTrace();
 			throw new CompletionException(e);
 		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			throw new CompletionException(e);
+		} catch (InternalServerError e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new CompletionException(e);
 		}

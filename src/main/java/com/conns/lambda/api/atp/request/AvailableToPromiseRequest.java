@@ -1,5 +1,6 @@
 package com.conns.lambda.api.atp.request;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.conns.lambda.common.http.ResponseBody;
@@ -39,7 +40,7 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	}
 
 	public void setReqID(String reqID) {
-		this.reqID = reqID;
+		this.reqID = trim(reqID);
 	}
 
 	public List<String> getProducts() {
@@ -47,7 +48,7 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	}
 
 	public void setProducts(List<String> products) {
-		this.products = products;
+		this.products = trim(products);
 	}
 
 	public String getLatitude() {
@@ -55,7 +56,7 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	}
 
 	public void setLatitude(String latitude) {
-		this.latitude = latitude;
+		this.latitude = trim(latitude);
 	}
 
 	public String getLongitude() {
@@ -63,7 +64,7 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	}
 
 	public void setLongitude(String longitude) {
-		this.longitude = longitude;
+		this.longitude = trim(longitude);
 	}
 
 	public String getZip() {
@@ -71,7 +72,7 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	}
 
 	public void setZip(String zip) {
-		this.zip = zip;
+		this.zip = trim(zip);
 	}
 
 	public String getLocale() {
@@ -79,7 +80,19 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	}
 
 	public void setLocale(String locale) {
-		this.locale = locale;
+		this.locale = trim(locale);
 	}
 	
+	public String trim(String value) {
+		return value != null ? value.trim() : null;
+	}
+	
+	public List<String> trim(List<String> values) {
+		List<String> valuesTrim = new ArrayList<String>();
+		for(String v: values) {
+			String tv = trim(v);
+			if(tv != null) valuesTrim.add(tv);
+		}
+		return valuesTrim;
+	}
 }

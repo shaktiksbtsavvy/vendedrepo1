@@ -126,7 +126,7 @@ public class ResponseBuilder {
 						String dateAvailble = null;
 						//Location loc = whLocations.get(lr.getLocationNumber());
 						//logger.debug("8-Selected warehouse location: {}.", loc != null ? loc.toString() : "");
-						//if (loc != null) {
+						//if (loc != null) { //Waehouse lookup is based on zipcode, not on Geo
 							if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
 								dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
 							} else {

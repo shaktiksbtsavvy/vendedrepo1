@@ -129,7 +129,7 @@ Resources:
           VERSION: 1.0
           RESTART: 1.0  # Change this value at runtime to force restart
           LOG_LEVEL: DEBUG
-          DISTANCETHRESHOLD: 75
+          DISTANCETHRESHOLD: 200
           INVENTORYFUN: !FindInMap
             - EnvMap
             - !Ref StageName

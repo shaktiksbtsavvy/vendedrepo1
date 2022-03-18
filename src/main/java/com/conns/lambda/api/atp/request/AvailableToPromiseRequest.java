@@ -34,6 +34,9 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	
 	@JsonProperty("locale")
 	private String locale;
+	
+	@JsonProperty("distance")
+	private Double distance;
 
 	public String getReqID() {
 		return reqID;
@@ -94,5 +97,13 @@ public class AvailableToPromiseRequest extends ResponseBody{
 			if(tv != null) valuesTrim.add(tv);
 		}
 		return valuesTrim;
+	}
+
+	public Double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(Double distance) {
+		this.distance = distance;
 	}
 }

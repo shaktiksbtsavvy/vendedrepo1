@@ -113,8 +113,8 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		return new LocationDTO(storeLocations, whLocations);
 	}
 
-	public LocationDTO getLocationsUsingLambda(String requestId, String lati, String longi) throws InternalServerError {
-		Double distanceThresh = Double.parseDouble(DISTANCETHRESHOLD);
+	public LocationDTO getLocationsUsingLambda(String requestId, String lati, String longi, Double distance) throws InternalServerError {
+		Double distanceThresh = distance != null && distance > 0 ? distance: Double.parseDouble(DISTANCETHRESHOLD);
 
 		logger.debug("Distance Thresh is :{}", distanceThresh);
 

@@ -63,7 +63,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	private static final String ddFunction = System.getenv(_DDFUN) != null ? System.getenv(_DDFUN).trim() : null; // INVTABLENAME
 
 	private static final AWSLambda awsLambda = AWSLambdaClientBuilder.standard().build();
-	
+
 	protected static final String SUCCESS = "Success";
 
 	public AvailableToPromiseDao() {
@@ -113,8 +113,9 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		return new LocationDTO(storeLocations, whLocations);
 	}
 
-	public LocationDTO getLocationsUsingLambda(String requestId, String lati, String longi, Double distance) throws InternalServerError {
-		Double distanceThresh = distance != null && distance > 0 ? distance: Double.parseDouble(DISTANCETHRESHOLD);
+	public LocationDTO getLocationsUsingLambda(String requestId, String lati, String longi, Double distance)
+			throws InternalServerError {
+		Double distanceThresh = distance != null && distance > 0 ? distance : Double.parseDouble(DISTANCETHRESHOLD);
 
 		logger.debug("Distance Thresh is :{}", distanceThresh);
 
@@ -133,6 +134,12 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 				}
 				if (sr.getType() != null && sr.getType().equalsIgnoreCase(_WHTYPE)) {
 					whLocations.put(sr.getStoreId(), new Location(sr));
+					
+					//https://conns.atlassian.net/browse/CIW-8758 //if pickupflag is 1 then add warehouse as pickuplocation 
+					if (sr.getPickup() != null && sr.getPickup() == 1.0) {
+						storeLocations.put(sr.getStoreId(), new Location(sr));
+					}
+					
 				}
 			}
 		} catch (JsonMappingException e) {
@@ -261,8 +268,9 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
 			inventoryRes = mapper.readValue(resMod.getBody(), InventoryAvailableResponse.class);
-			if(inventoryRes.getMessage() != null && !inventoryRes.getMessage().equalsIgnoreCase(SUCCESS)) {
-				throw new InternalServerError("Error invoking  getGeoLocationLambda {}", inventoryRes.getErrorDetails());
+			if (inventoryRes.getMessage() != null && !inventoryRes.getMessage().equalsIgnoreCase(SUCCESS)) {
+				throw new InternalServerError("Error invoking  getGeoLocationLambda {}",
+						inventoryRes.getErrorDetails());
 			}
 		}
 		return inventoryRes;
@@ -282,7 +290,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
 			geoResponse = mapper.readValue(resMod.getBody(), GeoStoreResponse.class);
-			if( geoResponse.getMessage() != null && !geoResponse.getMessage().equalsIgnoreCase(SUCCESS)) {
+			if (geoResponse.getMessage() != null && !geoResponse.getMessage().equalsIgnoreCase(SUCCESS)) {
 				throw new InternalServerError("Error invoking  getGeoLocationLambda {}", geoResponse.getErrorDetails());
 			}
 		}
@@ -303,7 +311,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		if (resMod != null) {
 			// LambdaResponse resMod = mapper.readValue(result, LambdaResponse.class);
 			res = mapper.readValue(resMod.getBody(), DeliveryDateResponse.class);
-			if(res.getMessage() != null && !res.getMessage().equalsIgnoreCase(SUCCESS)) {
+			if (res.getMessage() != null && !res.getMessage().equalsIgnoreCase(SUCCESS)) {
 				throw new InternalServerError("Error invoking  getGeoLocationLambda {}", res.getErrorDetails());
 			}
 		}

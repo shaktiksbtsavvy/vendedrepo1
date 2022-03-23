@@ -93,6 +93,9 @@ public class StoreResponse {
 	@JsonProperty("longitude")
 	private Double longitude;
 	
+	@JsonProperty("pickup")
+	private Double pickup;
+	
 	public String getStoreId() {
 		return storeId;
 	}
@@ -240,6 +243,16 @@ public class StoreResponse {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+
+	public Double getPickup() {
+		return pickup;
+	}
+
+
+	public void setPickup(Double pickup) {
+		this.pickup = pickup;
 	}
 	
 }

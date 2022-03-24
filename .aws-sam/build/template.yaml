@@ -41,51 +41,39 @@ Mappings:
     Dev:
       DAXENDPOINT: daxs://dax-api-cluster-dev.x2sy7j.dax-clusters.us-east-1.amazonaws.com
       POLICYDAXRESOURCE: arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-dev
-      POLICYDDBRESOURCE:
-      - arn:aws:dynamodb:us-east-1:203315843709:table/TST_CONNS_LOCATION
     UAT:
       DAXENDPOINT: daxs://dax-api-cluster-uat.x2sy7j.dax-clusters.us-east-1.amazonaws.com
       POLICYDAXRESOURCE: arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-uat
-      POLICYDDBRESOURCE:
-      - arn:aws:dynamodb:us-east-1:203315843709:table/UAT_CONNS_LOCATION
     Prod:
-      DAXENDPOINT: daxs://dax-api-cluster-uat.x2sy7j.dax-clusters.us-east-1.amazonaws.com
-      POLICYDAXRESOURCE: arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-uat
-      POLICYDDBRESOURCE:
-      - arn:aws:dynamodb:us-east-1:203315843709:table/UAT_CONNS_LOCATION
+      DAXENDPOINT: daxs://dax-api-cluster-prd.x2sy7j.dax-clusters.us-east-1.amazonaws.com
+      POLICYDAXRESOURCE: arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-prd
   WestRegEnvMap:
     Dev:
       DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com
       POLICYDAXRESOURCE: arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev
-      POLICYDDBRESOURCE:
-      - arn:aws:dynamodb:us-west-1:203315843709:table/TST_CONNS_LOCATION
     UAT:
       DAXENDPOINT: daxs://dax-api-cluster-uat.8hlusu.dax-clusters.us-west-1.amazonaws.com
       POLICYDAXRESOURCE: arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-uat
-      POLICYDDBRESOURCE:
-      - arn:aws:dynamodb:us-west-1:203315843709:table/UAT_CONNS_LOCATION
     Prod:
       DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com
       POLICYDAXRESOURCE: arn:aws:dax:us-west-1:203315843709:cache/dax-api-cluster-dev
-      POLICYDDBRESOURCE:
-      - arn:aws:dynamodb:us-west-1:203315843709:table/TST_CONNS_LOCATION
   EnvMap:
     Dev:
-      FUNMEMORYSIZE: 10240
+      FUNMEMORYSIZE: 5120
       INVENTORYFUN: InventoryApi-Dev
       DDFUN: DeliveryDateApi-Dev
       GEOLOCATIONFUN: GeoLocationApi-Dev
       LOCATIONTABLE: TST_CONNS_LOCATION
       PROVISIONEDCONCURRECY: 1
     UAT:
-      FUNMEMORYSIZE: 10240
+      FUNMEMORYSIZE: 5120
       INVENTORYFUN: InventoryApi-UAT
       DDFUN: DeliveryDateApi-UAT
       GEOLOCATIONFUN: GeoLocationApi-UAT
       LOCATIONTABLE: UAT_CONNS_LOCATION
       PROVISIONEDCONCURRECY: 1
     Prod:
-      FUNMEMORYSIZE: 10240
+      FUNMEMORYSIZE: 5120
       INVENTORYFUN: InventoryApi-Prod
       DDFUN: DeliveryDateApi-Prod
       GEOLOCATIONFUN: GeoLocationApi-Prod
@@ -127,37 +115,6 @@ Resources:
           - Ref: StageName
           - PROVISIONEDCONCURRECY
       Policies:
-      - Statement:
-        - Sid: DAXLambdaAccessPolicy
-          Effect: Allow
-          Action:
-          - dax:*
-          Resource:
-            Fn::If:
-            - CreateEastResources
-            - Fn::FindInMap:
-              - EastRegEnvMap
-              - Ref: StageName
-              - POLICYDAXRESOURCE
-            - Fn::FindInMap:
-              - WestRegEnvMap
-              - Ref: StageName
-              - POLICYDAXRESOURCE
-        - Sid: DYDBAccessPolicy
-          Effect: Allow
-          Action:
-          - dynamodb:*
-          Resource:
-            Fn::If:
-            - CreateEastResources
-            - Fn::FindInMap:
-              - EastRegEnvMap
-              - Ref: StageName
-              - POLICYDDBRESOURCE
-            - Fn::FindInMap:
-              - WestRegEnvMap
-              - Ref: StageName
-              - POLICYDDBRESOURCE
       - LambdaInvokePolicy:
           FunctionName:
             Fn::FindInMap:
@@ -224,10 +181,3 @@ Resources:
               - WestRegEnvMap
               - Ref: StageName
               - DAXENDPOINT
-          LOCATIONTABLE:
-            Fn::FindInMap:
-            - EnvMap
-            - Ref: StageName
-            - LOCATIONTABLE
-    Metadata:
-      SamResourceId: AvailableToPromiseFunction

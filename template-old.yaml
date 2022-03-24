@@ -90,7 +90,18 @@ Resources:
       AutoPublishAlias: live
       ProvisionedConcurrencyConfig:
         ProvisionedConcurrentExecutions: !FindInMap [EnvMap, !Ref StageName, PROVISIONEDCONCURRECY]
-      Policies:   
+      Policies:
+      - Statement:
+        - Sid: DAXLambdaAccessPolicy
+          Effect: Allow
+          Action:
+          - dax:*
+          Resource: !If [CreateEastResources, !FindInMap [EastRegEnvMap, !Ref StageName, POLICYDAXRESOURCE], !FindInMap [WestRegEnvMap, !Ref StageName, POLICYDAXRESOURCE]]
+        - Sid: DYDBAccessPolicy
+          Effect: Allow
+          Action:
+          - dynamodb:*
+          Resource: !If [CreateEastResources, !FindInMap [EastRegEnvMap, !Ref StageName, POLICYDDBRESOURCE], !FindInMap [WestRegEnvMap, !Ref StageName, POLICYDDBRESOURCE]]     
       - LambdaInvokePolicy:
           FunctionName: !FindInMap
                           - EnvMap
@@ -132,3 +143,7 @@ Resources:
             - !Ref StageName
             - GEOLOCATIONFUN
           DAXENDPOINT:  !If [CreateEastResources, !FindInMap [EastRegEnvMap, !Ref StageName, DAXENDPOINT], !FindInMap [WestRegEnvMap, !Ref StageName, DAXENDPOINT]]
+          LOCATIONTABLE: !FindInMap
+            - EnvMap
+            - !Ref StageName
+            - LOCATIONTABLE

@@ -1,11 +1,10 @@
 package com.conns.lambda.api.atp.dao;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
-import com.amazonaws.services.dynamodbv2.document.Item;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.conns.lambda.api.atp.model.Inventory.InventoryAvailableRequest;
@@ -17,15 +16,10 @@ import com.conns.lambda.api.atp.model.geo.GeoStoreResponse;
 import com.conns.lambda.api.atp.model.geo.StoreResponse;
 import com.conns.lambda.common.dao.DaxDataAccessObject;
 import com.conns.lambda.common.dao.LambdaDataAccessObject;
-import com.conns.lambda.common.exception.DBException;
-import com.conns.lambda.common.exception.ExceptionHandler;
 import com.conns.lambda.common.exception.InternalServerError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class AvailableToPromiseDao extends DaxDataAccessObject implements LambdaDataAccessObject {
 	private static final ObjectMapper mapper = new ObjectMapper(); // Use single instance of ObjectMapper in your code.
@@ -33,18 +27,17 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	private static final String _DDFUN = "DDFUN";
 	private static final String _GEOLOCATIONFUN = "GEOLOCATIONFUN";
 
-	private static final String _LONGITUDE = "longitude";
-	private static final String _LATITUDE = "latitude";
-	private static final String _TYPE = "type";
-	private static final String _LOCATIONNUMBER = "number";
-	private static final String _PICKUP = "pickup";
-	private static final String _ZIP = "zip";
+//	private static final String _LONGITUDE = "longitude";
+//	private static final String _LATITUDE = "latitude";
+//	private static final String _TYPE = "type";
+//	private static final String _LOCATIONNUMBER = "number";
+//	private static final String _PICKUP = "pickup";
+//	private static final String _ZIP = "zip";
 
-	private static final String _LOCATIONTABLE = "LOCATIONTABLE";
-	private static final Logger logger = LogManager.getLogger(AvailableToPromiseDao.class);
-	private static final String locationTable = System.getenv(_LOCATIONTABLE) != null
-			? System.getenv(_LOCATIONTABLE).trim()
-			: null; // _LOCATIONTABLE
+//	private static final String _LOCATIONTABLE = "LOCATIONTABLE";
+//	private static final String locationTable = System.getenv(_LOCATIONTABLE) != null
+//			? System.getenv(_LOCATIONTABLE).trim()
+//			: null; // _LOCATIONTABLE
 
 	private static final String _DISTANCETHRESHOLD = "DISTANCETHRESHOLD";
 	private static final String DISTANCETHRESHOLD = System.getenv(_DISTANCETHRESHOLD) != null
@@ -65,53 +58,55 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 	private static final AWSLambda awsLambda = AWSLambdaClientBuilder.standard().build();
 
 	protected static final String SUCCESS = "Success";
+	
+	private static final Logger logger = LogManager.getLogger(AvailableToPromiseDao.class);
 
 	public AvailableToPromiseDao() {
-		try {
-			loadLocations();
-		} catch (InternalServerError e) {
-			logger.error(ExceptionHandler.getStackDetails(e));
-		}
+//		try {
+//			loadLocations();
+//		} catch (InternalServerError e) {
+//			logger.error(ExceptionHandler.getStackDetails(e));
+//		}
 	}
 
-	public LocationDTO getLocations(String lati, String longi) throws InternalServerError {
-
-		Set<LocationMaster> locations = loadLocations();
-
-		double distanceThresh = Double.parseDouble(DISTANCETHRESHOLD);
-		double range = distanceThresh / 40.0; // average/minimum miles per degree
-
-		logger.debug("Distance Thresh is :{}", distanceThresh);
-
-		if (distanceThresh == 0) {
-			throw new InternalServerError("Invalid threshold distance.");
-		}
-
-		double lat = Double.parseDouble(lati);
-		double lon = Double.parseDouble(longi);
-
-		// HashSet<LocationMaster> selLocations = getLocations(lat, lon, range);
-
-		HashMap<String, Location> storeLocations = new HashMap<String, Location>();
-		HashMap<String, Location> whLocations = new HashMap<String, Location>();
-
-		for (LocationMaster lm : locations) {
-			double distance = distance(lm.getLatitude(), lm.getLongitude(), lat, lon);
-			if (distance <= distanceThresh) {
-				if (lm.getType() != null && lm.getType().equalsIgnoreCase(_STORETYPE)) {
-					storeLocations.put(lm.getLocationNumber(), new Location(lm, distance));
-				}
-				if (lm.getPickup() == 1 && lm.getType() != null && lm.getType().equalsIgnoreCase(_WHTYPE)) {
-					whLocations.put(lm.getLocationNumber(), new Location(lm, distance));
-				}
-			}
-		}
-
-		logger.debug("Number of store locations :{}", storeLocations.size());
-		logger.debug("Number of warehouse locations :{}", whLocations.size());
-
-		return new LocationDTO(storeLocations, whLocations);
-	}
+//	public LocationDTO getLocations(String lati, String longi) throws InternalServerError {
+//
+//		Set<LocationMaster> locations = loadLocations();
+//
+//		double distanceThresh = Double.parseDouble(DISTANCETHRESHOLD);
+//		double range = distanceThresh / 40.0; // average/minimum miles per degree
+//
+//		logger.debug("Distance Thresh is :{}", distanceThresh);
+//
+//		if (distanceThresh == 0) {
+//			throw new InternalServerError("Invalid threshold distance.");
+//		}
+//
+//		double lat = Double.parseDouble(lati);
+//		double lon = Double.parseDouble(longi);
+//
+//		// HashSet<LocationMaster> selLocations = getLocations(lat, lon, range);
+//
+//		HashMap<String, Location> storeLocations = new HashMap<String, Location>();
+//		HashMap<String, Location> whLocations = new HashMap<String, Location>();
+//
+//		for (LocationMaster lm : locations) {
+//			double distance = distance(lm.getLatitude(), lm.getLongitude(), lat, lon);
+//			if (distance <= distanceThresh) {
+//				if (lm.getType() != null && lm.getType().equalsIgnoreCase(_STORETYPE)) {
+//					storeLocations.put(lm.getLocationNumber(), new Location(lm, distance));
+//				}
+//				if (lm.getPickup() == 1 && lm.getType() != null && lm.getType().equalsIgnoreCase(_WHTYPE)) {
+//					whLocations.put(lm.getLocationNumber(), new Location(lm, distance));
+//				}
+//			}
+//		}
+//
+//		logger.debug("Number of store locations :{}", storeLocations.size());
+//		logger.debug("Number of warehouse locations :{}", whLocations.size());
+//
+//		return new LocationDTO(storeLocations, whLocations);
+//	}
 
 	public LocationDTO getLocationsUsingLambda(String requestId, String lati, String longi, Double distance)
 			throws InternalServerError {
@@ -158,37 +153,25 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		return new LocationDTO(storeLocations, whLocations);
 	}
 
-	public Set<LocationMaster> loadLocations() throws InternalServerError {
-		return loadLocations(true);
-	}
-
-	public Set<LocationMaster> loadLocations(Boolean reload) throws InternalServerError {
-		Set<LocationMaster> locations = null;
-		if (locations == null || reload) {
-			Runtime runtime = Runtime.getRuntime();
-			int memBefore = (int) runtime.freeMemory();
-			locations = new HashSet<LocationMaster>();
-			Iterator<Item> records;
-			try {
-				records = getAllRecords(locationTable);
-			} catch (DBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new InternalServerError("error scaning:" + locationTable);
-			}
-			if (records != null) {
-				while (records.hasNext()) {
-					Item item = records.next();
-					locations.add(new LocationMaster(item.getDouble(_LONGITUDE), item.getDouble(_LATITUDE),
-							item.getString(_TYPE), item.getString(_LOCATIONNUMBER), item.getDouble(_PICKUP),
-							item.getString(_ZIP)));
-				}
-			}
-			int memAfter = (int) runtime.freeMemory();
-			logger.debug("Memory used by location load: " + (memAfter - memBefore) + " bytes.");
-		}
-		return locations;
-	}
+	/*
+	 * public Set<LocationMaster> loadLocations() throws InternalServerError {
+	 * return loadLocations(true); }
+	 * 
+	 * public Set<LocationMaster> loadLocations(Boolean reload) throws
+	 * InternalServerError { Set<LocationMaster> locations = null; if (locations ==
+	 * null || reload) { Runtime runtime = Runtime.getRuntime(); int memBefore =
+	 * (int) runtime.freeMemory(); locations = new HashSet<LocationMaster>();
+	 * Iterator<Item> records; try { records = getAllRecords(locationTable); } catch
+	 * (DBException e) { // TODO Auto-generated catch block e.printStackTrace();
+	 * throw new InternalServerError("error scaning:" + locationTable); } if
+	 * (records != null) { while (records.hasNext()) { Item item = records.next();
+	 * locations.add(new LocationMaster(item.getDouble(_LONGITUDE),
+	 * item.getDouble(_LATITUDE), item.getString(_TYPE),
+	 * item.getString(_LOCATIONNUMBER), item.getDouble(_PICKUP),
+	 * item.getString(_ZIP))); } } int memAfter = (int) runtime.freeMemory();
+	 * logger.debug("Memory used by location load: " + (memAfter - memBefore) +
+	 * " bytes."); } return locations; }
+	 */
 
 	/*
 	 * public HashSet<LocationMaster> getLocations(double lat, double lon, double

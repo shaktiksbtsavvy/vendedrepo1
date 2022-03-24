@@ -50,13 +50,13 @@ public class AvailableToPromiseController extends RequestController {
 
 	@Override
 	public void loadCache(List<String> tables) {
-		try {
-				dao.loadLocations(true);
-				logger.debug("location cache loaded.");
-		} catch (InternalServerError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//				//dao.loadLocations(true);
+//				logger.debug("location cache loaded.");
+//		} catch (InternalServerError e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	/* (non-Javadoc)

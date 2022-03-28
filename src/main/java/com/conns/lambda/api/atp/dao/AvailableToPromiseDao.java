@@ -45,7 +45,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 			: null; // _LOCATIONTABLE
 
 	private static final String _STORETYPE = "STR";
-	private static final String _WHTYPE = "WH";
+	private static final String _WHTYPE = "WHS";
 
 	private static final String InventoryFunction = System.getenv(_INVENTORYFUN) != null
 			? System.getenv(_INVENTORYFUN).trim()

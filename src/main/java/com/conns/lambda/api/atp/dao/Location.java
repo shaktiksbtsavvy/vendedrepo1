@@ -2,6 +2,7 @@ package com.conns.lambda.api.atp.dao;
 
 import com.conns.lambda.api.atp.dao.AvailableToPromiseDao.LocationMaster;
 import com.conns.lambda.api.atp.model.geo.StoreResponse;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public  class Location implements Comparable<Location>{
 	/**
@@ -13,7 +14,7 @@ public  class Location implements Comparable<Location>{
 	 * @param zip
 	 */
 	public Location(Double longitude, Double latitude, String type, String locationNumber, Double distance,
-			String zip) {
+			String zip, Double pickup) {
 		super();
 		this.longitude = longitude;
 		this.latitude = latitude;
@@ -21,15 +22,16 @@ public  class Location implements Comparable<Location>{
 		this.locationNumber = locationNumber;
 		this.distance = distance;
 		this.zip = zip;
+		this.pickup = pickup;
 	}
 
 	
 	public Location(LocationMaster lm, Double distance) {
-		this(lm.getLatitude(), lm.getLongitude(), lm.getType(),lm.getLocationNumber(), distance, lm.getZip());
+		this(lm.getLatitude(), lm.getLongitude(), lm.getType(),lm.getLocationNumber(), distance, lm.getZip(), lm.getPickup());
 	}
 	
 	public Location(StoreResponse sr) {
-		this(sr.getLatitude(), sr.getLongitude(), sr.getType(),sr.getStoreId(), sr.getStoreDistance(), sr.getStoreZip());
+		this(sr.getLatitude(), sr.getLongitude(), sr.getType(),sr.getStoreId(), sr.getStoreDistance(), sr.getStoreZip(),sr.getPickup());
 	}
 	
 	/**
@@ -46,7 +48,7 @@ public  class Location implements Comparable<Location>{
 	private String locationNumber;
 	private Double distance;
 	private String zip;
-	
+	private Double pickup;
 
 	
 	public Double getLongitude() {
@@ -106,5 +108,15 @@ public  class Location implements Comparable<Location>{
 	public String toString() {
 		return "Location [longitude=" + longitude + ", latitude=" + latitude + ", type=" + type + ", locationNumber="
 				+ locationNumber + ", distance=" + distance + ", zip=" + zip + "]";
+	}
+
+
+	public Double getPickup() {
+		return pickup;
+	}
+
+
+	public void setPickup(Double pickup) {
+		this.pickup = pickup;
 	}
 }

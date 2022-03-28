@@ -104,14 +104,16 @@ public class ResponseBuilder {
 				logger.debug("6-skuName: {}.", skuName);
 				for (LocationResponse lr : pr.getLocations()) {
 					logger.debug("7-LocationResponse: {}.", lr != null ? lr.toString() : "");
-					if (lr != null && lr.getLocationType().equalsIgnoreCase(_STR)) {
+					
+					Location loc = storeLocations.get(lr.getLocationNumber());
+					// The below WH data is for Pickup from different WH
+					
+					if (loc == null) { 
+						logger.debug("7.1-inventory store location is null.");
+						loc = whLocations.get(lr.getLocationNumber());
+					}
+					if ((lr != null && lr.getLocationType().equalsIgnoreCase(_STR)) || (loc != null && loc.getPickup() == 1.0)) {
 
-						Location loc = storeLocations.get(lr.getLocationNumber());
-						// The below WH data is for Pickup from different WH
-						
-						if (loc == null) { 
-							loc = whLocations.get(lr.getLocationNumber());
-						}
 						
 						logger.debug("8-Selected store location: {}.", loc != null ? loc.toString() : "");
 						if (loc != null) {
@@ -122,7 +124,8 @@ public class ResponseBuilder {
 									getTodayInCST()));
 						}
 
-					} else if (lr != null && lr.getLocationType().equalsIgnoreCase(_WH)) {
+					}
+					if (lr != null && lr.getLocationType().equalsIgnoreCase(_WH)) {
 						String dateAvailble = null;
 						//Location loc = whLocations.get(lr.getLocationNumber());
 						//logger.debug("8-Selected warehouse location: {}.", loc != null ? loc.toString() : "");

@@ -104,17 +104,17 @@ public class ResponseBuilder {
 				logger.debug("6-skuName: {}.", skuName);
 				for (LocationResponse lr : pr.getLocations()) {
 					logger.debug("7-LocationResponse: {}.", lr != null ? lr.toString() : "");
-					
+
 					Location loc = storeLocations.get(lr.getLocationNumber());
 					// The below WH data is for Pickup from different WH
-					
-					if (loc == null) { 
+
+					if (loc == null) {
 						logger.debug("7.1-inventory store location is null.");
 						loc = whLocations.get(lr.getLocationNumber());
 					}
-					if ((lr != null && lr.getLocationType().equalsIgnoreCase(_STR)) || (loc != null && loc.getPickup() == 1.0)) {
-
-						
+					if ((lr != null && lr.getLocationType().equalsIgnoreCase(_STR) && loc.getPickup() == 1.0)
+							|| (lr != null && lr.getLocationType().equalsIgnoreCase(_WH) && loc.getPickup() == 1.0
+									&& lr.getOnhandFlag().equalsIgnoreCase("Y"))) {
 						logger.debug("8-Selected store location: {}.", loc != null ? loc.toString() : "");
 						if (loc != null) {
 							// pickupAtp.add(new PickupATPResponse(skuName, getTodayInCST(),
@@ -127,18 +127,19 @@ public class ResponseBuilder {
 					}
 					if (lr != null && lr.getLocationType().equalsIgnoreCase(_WH)) {
 						String dateAvailble = null;
-						//Location loc = whLocations.get(lr.getLocationNumber());
-						//logger.debug("8-Selected warehouse location: {}.", loc != null ? loc.toString() : "");
-						//if (loc != null) { //Waehouse lookup is based on zipcode, not on Geo
-							if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
-								dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
-							} else {
-								dateAvailble = nextDDDate.get(skuName);
-							}
-							logger.debug("9-dateAvailble: {}.", dateAvailble);
-							deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
-									dateAvailble));
-						//}
+						// Location loc = whLocations.get(lr.getLocationNumber());
+						// logger.debug("8-Selected warehouse location: {}.", loc != null ?
+						// loc.toString() : "");
+						// if (loc != null) { //Waehouse lookup is based on zipcode, not on Geo
+						if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
+							dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
+						} else {
+							dateAvailble = nextDDDate.get(skuName);
+						}
+						logger.debug("9-dateAvailble: {}.", dateAvailble);
+						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
+								dateAvailble));
+						// }
 
 					}
 				}

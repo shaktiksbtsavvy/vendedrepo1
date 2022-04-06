@@ -113,7 +113,7 @@ public class ResponseBuilder {
 						loc = whLocations.get(lr.getLocationNumber());
 					}
 					if ((lr != null && lr.getLocationType().equalsIgnoreCase(_STR) && loc.getPickup() == 1.0)
-							|| (lr != null && lr.getLocationType().equalsIgnoreCase(_WH) && loc.getPickup() == 1.0
+							|| (lr != null && loc != null && lr.getLocationType().equalsIgnoreCase(_WH) && loc.getPickup() == 1.0
 									&& lr.getOnhandFlag().equalsIgnoreCase("Y"))) {
 						logger.debug("8-Selected store location: {}.", loc != null ? loc.toString() : "");
 						if (loc != null) {

@@ -149,6 +149,7 @@ public class AvailableToPromiseController extends RequestController {
 		RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
 		RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
 		RequestValidator.validateZip(atpRequest.getZip(),true);
+		RequestValidator.validateSkus(atpRequest.getProducts(),true);
 //		if (atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
 //			throwInvalidRequestException("Latitude is required.");
 //		}

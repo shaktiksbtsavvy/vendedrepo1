@@ -19,8 +19,8 @@ import com.conns.lambda.api.atp.process.ResponseBuilder;
 import com.conns.lambda.api.atp.request.AvailableToPromiseRequest;
 import com.conns.lambda.common.controller.RequestController;
 import com.conns.lambda.common.exception.ExceptionHandler;
-import com.conns.lambda.common.exception.InternalServerError;
-import com.conns.lambda.common.exception.InvalidRequestException;
+import com.conns.lambda.common.exception.InternalServiceException;
+import com.conns.lambda.common.exception.InvalidRequestWarning;
 import com.conns.lambda.common.http.ApiResponseHeader;
 import com.conns.lambda.common.http.ResponseBody;
 import com.conns.lambda.common.logging.Performance;
@@ -64,7 +64,7 @@ public class AvailableToPromiseController extends RequestController {
 	 */
 	@Override
 	public ResponseBody handleRequest(APIGatewayProxyRequestEvent apiRequest, ApiResponseHeader headers)
-			throws InternalServerError, InvalidRequestException {
+			throws InvalidRequestWarning, InternalServiceException {
 		setRequestID(null);
 		String requestBody = apiRequest.getBody();
 		logger.debug("Request Body Received:{}", requestBody);
@@ -129,8 +129,8 @@ public class AvailableToPromiseController extends RequestController {
 		return response;
 	}
 
-	private void throwInvalidRequestException(String message) throws InvalidRequestException {
-		throw new InvalidRequestException(message + " Expected - {\r\n" + 
+	private void throwInvalidRequestException(String message) throws InvalidRequestWarning {
+		throw new InvalidRequestWarning(message + " Expected - {\r\n" + 
 				"\"reqID\": \"265325gsfdgs\",\r\n" + 
 				"\"products\": [\"AEE24DT\",\"AEE18DT\"],\r\n" + 
 				"\"latitude\": \"29.567719260470312\",\r\n" + 
@@ -140,7 +140,7 @@ public class AvailableToPromiseController extends RequestController {
 				"}");
 	}
 
-	private void validateRequest(AvailableToPromiseRequest atpRequest) throws InvalidRequestException {
+	private void validateRequest(AvailableToPromiseRequest atpRequest) throws InvalidRequestWarning {
 
 		if (atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
 			throwInvalidRequestException("Latitude is required.");
@@ -174,7 +174,7 @@ public class AvailableToPromiseController extends RequestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new CompletionException(e);
-		} catch (InternalServerError e) {
+		} catch (InternalServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new CompletionException(e);
@@ -199,7 +199,7 @@ public class AvailableToPromiseController extends RequestController {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			throw new CompletionException(e);
-		} catch (InternalServerError e) {
+		} catch (InternalServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new CompletionException(e);

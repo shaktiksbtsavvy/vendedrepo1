@@ -1,10 +1,10 @@
 package com.conns.lambda.api.atp;
 
-import com.conns.lambda.api.atp.controller.AvailableToPromiseController;
-import com.conns.lambda.common.http.APIRequestHandler;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.conns.lambda.api.atp.controller.AvailableToPromiseController;
+import com.conns.lambda.common.http.APIRequestHandler;
 
 public class AvailableToPromiseHandler extends APIRequestHandler {
 

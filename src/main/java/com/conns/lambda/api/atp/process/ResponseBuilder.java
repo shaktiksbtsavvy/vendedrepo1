@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -22,9 +21,9 @@ import com.conns.lambda.api.atp.model.dd.DeliveryDateResponse;
 import com.conns.lambda.api.atp.model.dd.NextDeliveryDateResponse;
 import com.conns.lambda.api.atp.model.dd.PurchaseOrder;
 import com.conns.lambda.api.atp.request.AvailableToPromiseRequest;
-import com.conns.lambda.api.atp.response.PickupATPResponse;
 import com.conns.lambda.api.atp.response.AvailableToPromiseResponse;
 import com.conns.lambda.api.atp.response.DeliveryATPResponse;
+import com.conns.lambda.api.atp.response.PickupATPResponse;
 import com.conns.lambda.common.exception.InvalidRequestException;
 import com.conns.lambda.common.http.ResponseBody;
 import com.conns.lambda.common.http.ResponseErrorBody;
@@ -55,7 +54,7 @@ public class ResponseBuilder {
 	 * @throws InvalidRequestException
 	 */
 	public ResponseBody buildResponseObject(AvailableToPromiseRequest request, InventoryAvailableResponse invRes,
-			DeliveryDateResponse ddRes, LocationDTO locationDTO) throws InvalidRequestException {
+			DeliveryDateResponse ddRes, LocationDTO locationDTO) {
 		return buildResponseObject(HTTP_200, SUCCESS, request, invRes, ddRes, locationDTO);
 	}
 

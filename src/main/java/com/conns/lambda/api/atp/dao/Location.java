@@ -2,7 +2,6 @@ package com.conns.lambda.api.atp.dao;
 
 import com.conns.lambda.api.atp.dao.AvailableToPromiseDao.LocationMaster;
 import com.conns.lambda.api.atp.model.geo.StoreResponse;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public  class Location implements Comparable<Location>{
 	/**

@@ -24,6 +24,7 @@ import com.conns.lambda.common.exception.InvalidRequestWarning;
 import com.conns.lambda.common.http.ApiResponseHeader;
 import com.conns.lambda.common.http.ResponseBody;
 import com.conns.lambda.common.logging.Performance;
+import com.conns.lambda.common.util.RequestValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -34,7 +35,6 @@ public class AvailableToPromiseController extends RequestController {
 	private static final Logger logger = LogManager.getLogger(AvailableToPromiseController.class);
 	private static final AvailableToPromiseDao dao = new AvailableToPromiseDao();
 	private static final ResponseBuilder responseBuilder = new ResponseBuilder();
-	Integer test ;
 
 	private AvailableToPromiseController() {
 	}
@@ -67,9 +67,6 @@ public class AvailableToPromiseController extends RequestController {
 	public ResponseBody handleRequest(APIGatewayProxyRequestEvent apiRequest, ApiResponseHeader headers)
 			throws InvalidRequestWarning, InternalServiceException {
 		setRequestID(null);
-	
-		test.toString();
-		
 		String requestBody = apiRequest.getBody();
 		logger.debug("Request Body Received:{}", requestBody);
 
@@ -83,7 +80,7 @@ public class AvailableToPromiseController extends RequestController {
 			try {
 				atpRequest = mapper.readValue(requestBody, AvailableToPromiseRequest.class);
 				validateRequest(atpRequest);
-				setRequestID(atpRequest.getReqID());
+				atpRequest.setReqID(setRequestID(atpRequest.getReqID()));
 				logger.debug("Request id:{}", atpRequest.getReqID());
 			} catch (JsonMappingException e) {
 				logger.debug(ExceptionHandler.getStackDetails(e));
@@ -149,17 +146,28 @@ public class AvailableToPromiseController extends RequestController {
 
 	private void validateRequest(AvailableToPromiseRequest atpRequest) throws InvalidRequestWarning {
 
-		if (atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
-			throwInvalidRequestException("Latitude is required.");
-		}
-		if (atpRequest.getLongitude() == null || atpRequest.getLongitude().length() == 0) {
-			throwInvalidRequestException("Longitude is required.");
-		}
-		if (atpRequest.getZip() == null || atpRequest.getZip() .length() == 0) {
-			throwInvalidRequestException("Zipcode is required.");
-		}
-
+		RequestValidator.validateLatitude(atpRequest.getLatitude());
+		RequestValidator.validateLongitude(atpRequest.getLongitude());
+		RequestValidator.validateZip(atpRequest.getZip());
+//		if (atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
+//			throwInvalidRequestException("Latitude is required.");
+//		}
+//		if (!NumberUtil.isNumeric(atpRequest.getLatitude()) || Double.parseDouble(atpRequest.getLatitude()) > 90 || Double.parseDouble(atpRequest.getLatitude()) < -90 ) {
+//			throwInvalidRequestException("Latitude must be between -90 and 90.");
+//		}
+//		if (atpRequest.getLongitude() == null || atpRequest.getLongitude().length() == 0) {
+//			throwInvalidRequestException("Longitude is required.");
+//		}
+//		if (!NumberUtil.isNumeric(atpRequest.getLongitude()) || Double.parseDouble(atpRequest.getLongitude()) > 180 || Double.parseDouble(atpRequest.getLongitude()) < -180 ) {
+//			throwInvalidRequestException("Longitude must be between -180 and 180.");
+//		}
+//		if (atpRequest.getZip() == null || atpRequest.getZip() .length() == 0) {
+//			throwInvalidRequestException("Zipcode is required.");
+//		}
+		
 	}
+	
+
 
 	private InventoryAvailableResponse getInventoryAvailable(LocationDTO locationDTO, AvailableToPromiseRequest atpRequest){
 		InventoryAvailableRequest invRequest = new InventoryAvailableRequest();

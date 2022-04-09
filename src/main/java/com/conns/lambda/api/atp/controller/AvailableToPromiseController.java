@@ -146,9 +146,9 @@ public class AvailableToPromiseController extends RequestController {
 
 	private void validateRequest(AvailableToPromiseRequest atpRequest) throws InvalidRequestWarning {
 
-		RequestValidator.validateLatitude(atpRequest.getLatitude());
-		RequestValidator.validateLongitude(atpRequest.getLongitude());
-		RequestValidator.validateZip(atpRequest.getZip());
+		RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
+		RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
+		RequestValidator.validateZip(atpRequest.getZip(),true);
 //		if (atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
 //			throwInvalidRequestException("Latitude is required.");
 //		}

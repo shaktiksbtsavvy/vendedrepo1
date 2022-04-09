@@ -138,12 +138,8 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 				}
 			}
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			throw new InternalServiceException("Invalid response structure from getGeoLocationLambda");
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			throw new InternalServiceException("Invalid response structure from getGeoLocationLambda");
 		}
 

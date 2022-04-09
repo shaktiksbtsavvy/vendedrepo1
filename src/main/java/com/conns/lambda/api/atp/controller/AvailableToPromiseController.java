@@ -103,7 +103,7 @@ public class AvailableToPromiseController extends RequestController {
 		final AvailableToPromiseRequest atpReq = atpRequest;
 		
 		
-		CompletableFuture<InventoryAvailableResponse> inventoryLambdaFuture = CompletableFuture.supplyAsync(() -> getInventoryAvailable(locationDTO,atpReq));
+		CompletableFuture<InventoryAvailableResponse> inventoryLambdaFuture = CompletableFuture.supplyAsync(() -> getInventoryAvailable(locationDTO.getDLLocation(), locationDTO.getPULocations(),atpReq));
 		/*if(locationDTO.getDLLocation()== null || locationDTO.getDLLocation() == "") {
 			throw new InvalidRequestException("No warehouse found within the delivery radius.");
 		}*/
@@ -169,11 +169,11 @@ public class AvailableToPromiseController extends RequestController {
 	
 
 
-	private InventoryAvailableResponse getInventoryAvailable(LocationDTO locationDTO, AvailableToPromiseRequest atpRequest){
+	private InventoryAvailableResponse getInventoryAvailable(String dlLocation , List<String> puLocations, AvailableToPromiseRequest atpRequest){
 		InventoryAvailableRequest invRequest = new InventoryAvailableRequest();
 		invRequest.setReqID(atpRequest.getReqID());
-		invRequest.setDL_Location(locationDTO.getDLLocation());
-		invRequest.setPU_Location(locationDTO.getPULocations());
+		invRequest.setDL_Location(dlLocation);
+		invRequest.setPU_Location(puLocations);
 		invRequest.setSKU(atpRequest.getProducts());
 		invRequest.setZipcode(atpRequest.getZip());
 		InventoryAvailableResponse invRes = null;

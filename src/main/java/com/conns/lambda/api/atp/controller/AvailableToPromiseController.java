@@ -34,6 +34,7 @@ public class AvailableToPromiseController extends RequestController {
 	private static final Logger logger = LogManager.getLogger(AvailableToPromiseController.class);
 	private static final AvailableToPromiseDao dao = new AvailableToPromiseDao();
 	private static final ResponseBuilder responseBuilder = new ResponseBuilder();
+	Integer test ;
 
 	private AvailableToPromiseController() {
 	}
@@ -66,6 +67,9 @@ public class AvailableToPromiseController extends RequestController {
 	public ResponseBody handleRequest(APIGatewayProxyRequestEvent apiRequest, ApiResponseHeader headers)
 			throws InvalidRequestWarning, InternalServiceException {
 		setRequestID(null);
+	
+		test.toString();
+		
 		String requestBody = apiRequest.getBody();
 		logger.debug("Request Body Received:{}", requestBody);
 

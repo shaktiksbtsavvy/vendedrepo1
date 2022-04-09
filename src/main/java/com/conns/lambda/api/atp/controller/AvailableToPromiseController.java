@@ -111,15 +111,18 @@ public class AvailableToPromiseController extends RequestController {
 		DeliveryDateResponse ddRes = null;
 		try {
 			invRes = inventoryLambdaFuture.get();
+		} catch (InterruptedException e) {
+			throw new InternalServiceException("InterruptedException from inventoryLambda.", e);
+		} catch (ExecutionException e) {
+			throw new InternalServiceException("ExecutionException from inventoryLambda.", e);
+		}
+		try {
 			ddRes = ddLambdaFuture.get();
 		} catch (InterruptedException e) {
-			logger.debug(ExceptionHandler.getStackDetails(e));
-			throwInvalidRequestException(e.getMessage());
+			throw new InternalServiceException("InterruptedException from ddLambda.", e);
 		} catch (ExecutionException e) {
-			logger.debug(ExceptionHandler.getStackDetails(e));
-			throwInvalidRequestException(e.getMessage());
+			throw new InternalServiceException("ExecutionException from ddLambda", e);
 		}
-
 		Performance p2 = new Performance("Total build response from retrived inventory.", logger);
 		p2.start();
 		ResponseBody response = responseBuilder.buildResponseObject(atpRequest, invRes, ddRes, locationDTO);

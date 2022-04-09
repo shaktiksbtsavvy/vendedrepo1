@@ -67,7 +67,8 @@ public class LocationDTO {
 			}
 			return puLocations;
 		} else {
-			return new ArrayList<String>();
+			//return new ArrayList<String>();
+			return null;
 		}
 	}
 

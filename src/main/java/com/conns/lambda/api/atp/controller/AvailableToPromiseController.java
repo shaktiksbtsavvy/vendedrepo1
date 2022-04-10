@@ -98,20 +98,33 @@ public class AvailableToPromiseController extends RequestController {
 		logger.debug("Request Body Mapped with sku list {}", atpRequest.getProducts());
 
 		
+		Performance p2 = new Performance("Get Locations Using Lambda", logger);
+		p2.start();
 		LocationDTO locationDTO = dao.getLocationsUsingLambda(atpRequest.getReqID(), atpRequest.getLatitude(), atpRequest.getLongitude(), atpRequest.getDistance());
+		p2.end();
 		
 		//LocationDTO locationDTO = dao.getLocations(atpRequest.getLatitude(), atpRequest.getLongitude());
 
 		final AvailableToPromiseRequest atpReq = atpRequest;
 		
-		
+		Performance p3 = new Performance("Send Async inventory Lambda ", logger);
+		p3.start();
 		CompletableFuture<InventoryAvailableResponse> inventoryLambdaFuture = CompletableFuture.supplyAsync(() -> getInventoryAvailable(locationDTO.getDLLocation(), locationDTO.getPULocations(),atpReq));
 		/*if(locationDTO.getDLLocation()== null || locationDTO.getDLLocation() == "") {
 			throw new InvalidRequestException("No warehouse found within the delivery radius.");
 		}*/
+		p3.end();
+		
+		Performance p4 = new Performance("Send Async DD Lambda ", logger);
+		p4.start();
 		CompletableFuture<DeliveryDateResponse> ddLambdaFuture = CompletableFuture.supplyAsync(() -> getDeliveryDate(locationDTO,atpReq));
+		p4.end();
+		
+		
 		InventoryAvailableResponse invRes = null;
 		DeliveryDateResponse ddRes = null;
+		Performance p5 = new Performance("Get inventory Lambda ", logger);
+		p5.start();
 		try {
 			invRes = inventoryLambdaFuture.get();
 		} catch (InterruptedException e) {
@@ -119,6 +132,10 @@ public class AvailableToPromiseController extends RequestController {
 		} catch (ExecutionException e) {
 			throw new InternalServiceException("ExecutionException from inventoryLambda.", e);
 		}
+		p5.end();
+		
+		Performance p6 = new Performance("Get DD Lambda ", logger);
+		p6.start();
 		try {
 			ddRes = ddLambdaFuture.get();
 		} catch (InterruptedException e) {
@@ -126,10 +143,12 @@ public class AvailableToPromiseController extends RequestController {
 		} catch (ExecutionException e) {
 			throw new InternalServiceException("ExecutionException from ddLambda", e);
 		}
-		Performance p2 = new Performance("Total build response from retrived inventory.", logger);
-		p2.start();
+		p6.end();
+		
+		Performance p7 = new Performance("Total build response from retrived inventory.", logger);
+		p7.start();
 		ResponseBody response = responseBuilder.buildResponseObject(atpRequest, invRes, ddRes, locationDTO);
-		p2.end();
+		p7.end();
 		logger.debug("After Calling responseBuilder.buildResponseObject:" + response);
 
 		return response;

@@ -79,8 +79,10 @@ public class AvailableToPromiseController extends RequestController {
 			mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
 			try {
 				atpRequest = mapper.readValue(requestBody, AvailableToPromiseRequest.class);
-				validateRequest(atpRequest);
 				atpRequest.setReqID(setRequestID(atpRequest.getReqID()));
+				
+				validateRequest(atpRequest);
+				
 				logger.debug("Request id:{}", atpRequest.getReqID());
 			} catch (JsonMappingException e) {
 				logger.debug(ExceptionHandler.getStackDetails(e));

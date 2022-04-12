@@ -111,9 +111,10 @@ public class ResponseBuilder {
 						logger.debug("7.1-inventory store location is null.");
 						loc = whLocations.get(lr.getLocationNumber());
 					}
-					if ((lr != null && lr.getLocationType().equalsIgnoreCase(_STR) && loc.getPickup() == 1.0)
-							|| (lr != null && loc != null && lr.getLocationType().equalsIgnoreCase(_WH) && loc.getPickup() == 1.0
-									&& lr.getOnhandFlag().equalsIgnoreCase("Y"))) {
+					if ((lr != null && lr.getLocationType().equalsIgnoreCase(_STR) && loc.getPickup() == 1.0) //WH are already included in STRs
+//							|| (lr != null && loc != null && lr.getLocationType().equalsIgnoreCase(_WH) && loc.getPickup() == 1.0
+//									&& lr.getOnhandFlag().equalsIgnoreCase("Y"))
+							) {
 						logger.debug("8-Selected store location: {}.", loc != null ? loc.toString() : "");
 						if (loc != null) {
 							// pickupAtp.add(new PickupATPResponse(skuName, getTodayInCST(),

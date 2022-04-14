@@ -84,8 +84,6 @@ public class AvailableToPromiseController extends RequestController {
 				
 				validateRequest(atpRequest);
 				
-				atpRequest.setProducts(RequestUtil.removeDuplicateSkus(atpRequest.getProducts()));
-				
 				logger.debug("Request id:{}", atpRequest.getReqID());
 			} catch (JsonMappingException e) {
 				logger.debug(ExceptionHandler.getStackDetails(e));

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.conns.lambda.common.http.ResponseBody;
+import com.conns.lambda.common.util.RequestUtil;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -51,7 +52,7 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	}
 
 	public void setProducts(List<String> products) {
-		this.products = trim(products);
+		this.products = RequestUtil.removeDuplicateSkus(trim(products));
 	}
 
 	public String getLatitude() {

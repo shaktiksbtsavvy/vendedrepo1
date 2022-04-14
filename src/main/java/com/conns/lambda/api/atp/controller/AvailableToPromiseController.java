@@ -24,6 +24,7 @@ import com.conns.lambda.common.exception.InvalidRequestWarning;
 import com.conns.lambda.common.http.ApiResponseHeader;
 import com.conns.lambda.common.http.ResponseBody;
 import com.conns.lambda.common.logging.Performance;
+import com.conns.lambda.common.util.RequestUtil;
 import com.conns.lambda.common.util.RequestValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -82,6 +83,8 @@ public class AvailableToPromiseController extends RequestController {
 				atpRequest.setReqID(setRequestID(atpRequest.getReqID()));
 				
 				validateRequest(atpRequest);
+				
+				atpRequest.setProducts(RequestUtil.removeDuplicateSkus(atpRequest.getProducts()));
 				
 				logger.debug("Request id:{}", atpRequest.getReqID());
 			} catch (JsonMappingException e) {

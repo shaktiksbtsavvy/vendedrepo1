@@ -58,6 +58,31 @@ public class PickupATPResponse  implements Comparable<PickupATPResponse> {
 		this.availableQty = availableQty != null ? Double.parseDouble(availableQty) : 0;
 	}
 
+	public PickupATPResponse(String sku, String locationWebsiteUrl, String locationType, String locationName,
+			Double locationLong, Double locationLat, String locationContactNumber, String location, Double distance,
+			String atpDate, String availableQty, String addressZip, String addressState, String addressLn_2,
+			String addressLn_1, String addressCity, String storeClosingTime, String storeHours) {
+		super();
+		this.sku = sku;
+		this.locationWebsiteUrl = locationWebsiteUrl;
+		this.locationType = locationType;
+		this.locationName = locationName;
+		this.locationLong = locationLong;
+		this.locationLat = locationLat;
+		this.locationContactNumber = locationContactNumber;
+		this.location = location;
+		this.distance = distance;
+		this.atpDate = atpDate;
+		this.availableQty = availableQty != null ? Double.parseDouble(availableQty) : 0;
+		this.addressZip = addressZip;
+		this.addressState = addressState;
+		this.addressLn_2 = addressLn_2;
+		this.addressLn_1 = addressLn_1;
+		this.addressCity = addressCity;
+		this.storeClosingTime = storeClosingTime;
+		this.storeHours = storeHours;
+	}
+
 	@JsonProperty("sku")
 	private String sku;
 	
@@ -108,6 +133,13 @@ public class PickupATPResponse  implements Comparable<PickupATPResponse> {
 	
 	@JsonProperty("address_city")
 	private String addressCity;
+	
+	@JsonProperty("store_closing_time")
+	private String storeClosingTime;
+	
+	@JsonProperty("store_hours")
+	private String storeHours;
+
 
 	public String getSku() {
 		return sku;
@@ -243,6 +275,22 @@ public class PickupATPResponse  implements Comparable<PickupATPResponse> {
 
 	public void setAddressCity(String addressCity) {
 		this.addressCity = addressCity;
+	}
+
+	public String getStoreClosingTime() {
+		return storeClosingTime;
+	}
+
+	public void setStoreClosingTime(String storeClosingTime) {
+		this.storeClosingTime = storeClosingTime;
+	}
+
+	public String getStoreHours() {
+		return storeHours;
+	}
+
+	public void setStoreHours(String storeHours) {
+		this.storeHours = storeHours;
 	}
 
 	@Override

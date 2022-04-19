@@ -119,9 +119,13 @@ public class ResponseBuilder {
 						if (loc != null) {
 							// pickupAtp.add(new PickupATPResponse(skuName, getTodayInCST(),
 							// lr.getQtyAvailable()));
-							pickupAtp.add(new PickupATPResponse(skuName, lr.getLocationType(), loc.getLongitude(),
-									loc.getLatitude(), lr.getLocationNumber(), loc.getDistance(), lr.getQtyAvailable(),
-									getTodayInCST()));
+//							pickupAtp.add(new PickupATPResponse(skuName, lr.getLocationType(), loc.getLongitude(),
+//									loc.getLatitude(), lr.getLocationNumber(), loc.getDistance(), lr.getQtyAvailable(),
+//									getTodayInCST()));
+							pickupAtp.add(new PickupATPResponse(skuName, loc.getStoreResponse().getStoreUrl(), lr.getLocationType(), loc.getStoreResponse().getStoreName(), loc.getLongitude(), loc.getLatitude(), 
+									loc.getStoreResponse().getStorePhone(), lr.getLocationNumber(), loc.getDistance(), getTodayInCST(), lr.getQtyAvailable(), 
+									loc.getStoreResponse().getStoreZip(), loc.getStoreResponse().getStoreState(), loc.getStoreResponse().getStoreAddressln2(),
+									loc.getStoreResponse().getStoreAddressln1(), loc.getStoreResponse().getStoreCity(), loc.getStoreResponse().getStoreClosingTime(),loc.getStoreResponse().getStoreHours()));
 						}
 
 					}

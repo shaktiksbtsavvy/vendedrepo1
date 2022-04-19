@@ -13,7 +13,7 @@ public  class Location implements Comparable<Location>{
 	 * @param zip
 	 */
 	public Location(Double longitude, Double latitude, String type, String locationNumber, Double distance,
-			String zip, Double pickup) {
+			String zip, Double pickup, StoreResponse sr) {
 		super();
 		this.longitude = longitude;
 		this.latitude = latitude;
@@ -22,15 +22,16 @@ public  class Location implements Comparable<Location>{
 		this.distance = distance;
 		this.zip = zip;
 		this.pickup = pickup;
+		this.storeResponse = sr;
 	}
 
 	
 	public Location(LocationMaster lm, Double distance) {
-		this(lm.getLatitude(), lm.getLongitude(), lm.getType(),lm.getLocationNumber(), distance, lm.getZip(), lm.getPickup());
+		this(lm.getLatitude(), lm.getLongitude(), lm.getType(),lm.getLocationNumber(), distance, lm.getZip(), lm.getPickup(), null);
 	}
 	
 	public Location(StoreResponse sr) {
-		this(sr.getLatitude(), sr.getLongitude(), sr.getType(),sr.getStoreId(), sr.getStoreDistance(), sr.getStoreZip(),sr.getPickup());
+		this(sr.getLatitude(), sr.getLongitude(), sr.getType(),sr.getStoreId(), sr.getStoreDistance(), sr.getStoreZip(),sr.getPickup(), sr);
 	}
 	
 	/**
@@ -48,6 +49,7 @@ public  class Location implements Comparable<Location>{
 	private Double distance;
 	private String zip;
 	private Double pickup;
+	private StoreResponse storeResponse;
 
 	
 	public Double getLongitude() {
@@ -106,7 +108,7 @@ public  class Location implements Comparable<Location>{
 	@Override
 	public String toString() {
 		return "Location [longitude=" + longitude + ", latitude=" + latitude + ", type=" + type + ", locationNumber="
-				+ locationNumber + ", distance=" + distance + ", zip=" + zip + "]";
+				+ locationNumber + ", distance=" + distance + ", zip=" + zip + ", StoreResponse=" + storeResponse + "]";
 	}
 
 
@@ -117,5 +119,14 @@ public  class Location implements Comparable<Location>{
 
 	public void setPickup(Double pickup) {
 		this.pickup = pickup;
+	}
+
+	public StoreResponse getStoreResponse() {
+		return storeResponse;
+	}
+
+
+	public void setStoreResponse(StoreResponse storeResponse) {
+		this.storeResponse = storeResponse;
 	}
 }

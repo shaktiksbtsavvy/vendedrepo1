@@ -192,20 +192,29 @@ public class AvailableToPromiseController extends RequestController {
 		//--this is temp fix to hide UI error until BigC UI fix that their front end code
 		final String defaultLatitude = "29.8308828";
 	    final String defaultLongitude = "-95.3858507";
+	    final String defaultZip = "77022";
+		if(atpRequest.getZip() == null || atpRequest.getZip().length() != 5) {
+			logger.info("Invalid zip {}",atpRequest.getZip());
+			atpRequest.setZip(defaultZip);
+		}
 		if(atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
+			logger.info("Invalid Latitude {}",atpRequest.getLatitude());
 			atpRequest.setLatitude(defaultLatitude);
 		}
 		if(atpRequest.getLongitude()== null || atpRequest.getLongitude().length() == 0) {
+			logger.info("Invalid Longitude {}",atpRequest.getLongitude());
 			atpRequest.setLongitude(defaultLongitude);
 		}
 	    try {
 	        Double.parseDouble(atpRequest.getLatitude());
 	    } catch (NumberFormatException nfe) {
+	    	logger.info("Invalid Latitude {}",atpRequest.getLatitude());
 	    	atpRequest.setLatitude(defaultLatitude);
 	    }
 	    try {
 	        Double.parseDouble(atpRequest.getLongitude());
 	    } catch (NumberFormatException nfe) {
+	    	logger.info("Invalid Longitude {}",atpRequest.getLongitude());
 	    	atpRequest.setLongitude(defaultLongitude);
 	    }
 	}

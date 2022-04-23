@@ -103,6 +103,12 @@ public class AvailableToPromiseController extends RequestController {
 		
 
 		//-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378---------------------
+		if(atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
+			atpRequest.setLatitude(defaultLatitude);
+		}
+		if(atpRequest.getLongitude()== null || atpRequest.getLongitude().length() == 0) {
+			atpRequest.setLongitude(defaultLongitude);
+		}
 	    try {
 	        Double.parseDouble(atpRequest.getLatitude());
 	    } catch (NumberFormatException nfe) {

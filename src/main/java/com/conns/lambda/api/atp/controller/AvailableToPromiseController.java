@@ -36,8 +36,7 @@ public class AvailableToPromiseController extends RequestController {
 	private static final Logger logger = LogManager.getLogger(AvailableToPromiseController.class);
 	private static final AvailableToPromiseDao dao = new AvailableToPromiseDao();
 	private static final ResponseBuilder responseBuilder = new ResponseBuilder();
-	private static final String defaultLatitude = "29.8308828";
-    private static final String defaultLongitude = "-95.3858507";
+
 
 	private AvailableToPromiseController() {
 	}
@@ -103,24 +102,7 @@ public class AvailableToPromiseController extends RequestController {
 		
 
 		//-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378---------------------
-		if(atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
-			atpRequest.setLatitude(defaultLatitude);
-		}
-		if(atpRequest.getLongitude()== null || atpRequest.getLongitude().length() == 0) {
-			atpRequest.setLongitude(defaultLongitude);
-		}
-	    try {
-	        Double.parseDouble(atpRequest.getLatitude());
-	    } catch (NumberFormatException nfe) {
-	    	atpRequest.setLatitude(defaultLatitude);
-	    }
-	    try {
-	        Double.parseDouble(atpRequest.getLongitude());
-	    } catch (NumberFormatException nfe) {
-	    	atpRequest.setLongitude(defaultLongitude);
-	    }
-	    //-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378--------------------
-	    
+		tempfixCIW9378(atpRequest);
 	    
 		
 		Performance p2 = new Performance("Get Locations Using Lambda", logger);
@@ -204,6 +186,29 @@ public class AvailableToPromiseController extends RequestController {
 	}
 	
 
+	//-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378---------------------
+	private void tempfixCIW9378(AvailableToPromiseRequest atpRequest) {
+		//-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378---------------------
+		//--this is temp fix to hide UI error until BigC UI fix that their front end code
+		final String defaultLatitude = "29.8308828";
+	    final String defaultLongitude = "-95.3858507";
+		if(atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
+			atpRequest.setLatitude(defaultLatitude);
+		}
+		if(atpRequest.getLongitude()== null || atpRequest.getLongitude().length() == 0) {
+			atpRequest.setLongitude(defaultLongitude);
+		}
+	    try {
+	        Double.parseDouble(atpRequest.getLatitude());
+	    } catch (NumberFormatException nfe) {
+	    	atpRequest.setLatitude(defaultLatitude);
+	    }
+	    try {
+	        Double.parseDouble(atpRequest.getLongitude());
+	    } catch (NumberFormatException nfe) {
+	    	atpRequest.setLongitude(defaultLongitude);
+	    }
+	}
 
 	private InventoryAvailableResponse getInventoryAvailable(String dlLocation , List<String> puLocations, AvailableToPromiseRequest atpRequest){
 		InventoryAvailableRequest invRequest = new InventoryAvailableRequest();

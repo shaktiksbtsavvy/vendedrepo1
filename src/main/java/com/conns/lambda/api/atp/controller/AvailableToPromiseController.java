@@ -31,12 +31,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * @author shakt
+ *
+ */
 public class AvailableToPromiseController extends RequestController {
 
 	private static final Logger logger = LogManager.getLogger(AvailableToPromiseController.class);
 	private static final AvailableToPromiseDao dao = new AvailableToPromiseDao();
 	private static final ResponseBuilder responseBuilder = new ResponseBuilder();
-
 
 	private AvailableToPromiseController() {
 	}
@@ -61,9 +64,13 @@ public class AvailableToPromiseController extends RequestController {
 //			e.printStackTrace();
 //		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.conns.lambda.common.controller.RequestController#handleRequest(com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent, com.conns.lambda.common.http.ApiResponseHeader)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.conns.lambda.common.controller.RequestController#handleRequest(com.
+	 * amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent,
+	 * com.conns.lambda.common.http.ApiResponseHeader)
 	 */
 	@Override
 	public ResponseBody handleRequest(APIGatewayProxyRequestEvent apiRequest, ApiResponseHeader headers)
@@ -82,9 +89,9 @@ public class AvailableToPromiseController extends RequestController {
 			try {
 				atpRequest = mapper.readValue(requestBody, AvailableToPromiseRequest.class);
 				atpRequest.setReqID(setRequestID(atpRequest.getReqID()));
-				
+
 				validateRequest(atpRequest);
-				
+
 				logger.debug("Request id:{}", atpRequest.getReqID());
 			} catch (JsonMappingException e) {
 				logger.debug(ExceptionHandler.getStackDetails(e));
@@ -98,36 +105,29 @@ public class AvailableToPromiseController extends RequestController {
 		}
 		p1.end();
 		logger.debug("Request Body Mapped with sku list {}", atpRequest.getProducts());
-		
-		
 
-		//-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378---------------------
-		tempfixCIW9378(atpRequest);
-	    
-		
+
 		Performance p2 = new Performance("Get Locations Using Lambda", logger);
 		p2.start();
-		LocationDTO locationDTO = dao.getLocationsUsingLambda(atpRequest.getReqID(), atpRequest.getLatitude(), atpRequest.getLongitude(), atpRequest.getDistance());
+		LocationDTO locationDTO = dao.getLocationsUsingLambda(atpRequest.getReqID(), atpRequest.getLatitude(),
+				atpRequest.getLongitude(), atpRequest.getDistance());
 		p2.end();
-		
-		//LocationDTO locationDTO = dao.getLocations(atpRequest.getLatitude(), atpRequest.getLongitude());
+
 
 		final AvailableToPromiseRequest atpReq = atpRequest;
-		
+
 		Performance p3 = new Performance("Send Async inventory Lambda ", logger);
 		p3.start();
-		CompletableFuture<InventoryAvailableResponse> inventoryLambdaFuture = CompletableFuture.supplyAsync(() -> getInventoryAvailable(locationDTO.getDLLocation(), locationDTO.getPULocations(),atpReq));
-		/*if(locationDTO.getDLLocation()== null || locationDTO.getDLLocation() == "") {
-			throw new InvalidRequestException("No warehouse found within the delivery radius.");
-		}*/
+		CompletableFuture<InventoryAvailableResponse> inventoryLambdaFuture = CompletableFuture.supplyAsync(
+				() -> getInventoryAvailable(locationDTO.getDLLocation(), locationDTO.getPULocations(), atpReq));
 		p3.end();
-		
+
 		Performance p4 = new Performance("Send Async DD Lambda ", logger);
 		p4.start();
-		CompletableFuture<DeliveryDateResponse> ddLambdaFuture = CompletableFuture.supplyAsync(() -> getDeliveryDate(locationDTO,atpReq));
+		CompletableFuture<DeliveryDateResponse> ddLambdaFuture = CompletableFuture
+				.supplyAsync(() -> getDeliveryDate(locationDTO, atpReq));
 		p4.end();
-		
-		
+
 		InventoryAvailableResponse invRes = null;
 		DeliveryDateResponse ddRes = null;
 		Performance p5 = new Performance("Get inventory Lambda ", logger);
@@ -140,7 +140,7 @@ public class AvailableToPromiseController extends RequestController {
 			throw new InternalServiceException("ExecutionException from inventoryLambda.", e);
 		}
 		p5.end();
-		
+
 		Performance p6 = new Performance("Get DD Lambda ", logger);
 		p6.start();
 		try {
@@ -151,7 +151,7 @@ public class AvailableToPromiseController extends RequestController {
 			throw new InternalServiceException("ExecutionException from ddLambda", e);
 		}
 		p6.end();
-		
+
 		Performance p7 = new Performance("Total build response from retrived inventory.", logger);
 		p7.start();
 		ResponseBody response = responseBuilder.buildResponseObject(atpRequest, invRes, ddRes, locationDTO);
@@ -162,66 +162,53 @@ public class AvailableToPromiseController extends RequestController {
 	}
 
 	private void throwInvalidRequestException(String message) throws InvalidRequestWarning {
-		throw new InvalidRequestWarning(message + " Expected - {\r\n" + 
-				"\"reqID\": \"265325gsfdgs\",\r\n" + 
-				"\"products\": [\"AEE24DT\",\"AEE18DT\"],\r\n" + 
-				"\"latitude\": \"29.567719260470312\",\r\n" + 
-				"\"longitude\": \"-95.68109502268624\",\r\n" + 
-				"\"zip\": 77479,\r\n" + 
-				"\"locale\": \"CDT\"\r\n" + 
-				"}");
+		throw new InvalidRequestWarning(message + " Expected - {\r\n" + "\"reqID\": \"265325gsfdgs\",\r\n"
+				+ "\"products\": [\"AEE24DT\",\"AEE18DT\"],\r\n" + "\"latitude\": \"29.567719260470312\",\r\n"
+				+ "\"longitude\": \"-95.68109502268624\",\r\n" + "\"zip\": 77479,\r\n" + "\"locale\": \"CDT\"\r\n"
+				+ "}");
 	}
 
 	private void validateRequest(AvailableToPromiseRequest atpRequest) throws InvalidRequestWarning {
 
-		/*	temp fix for https://conns.atlassian.net/browse/CIW-9378
-		 * RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
-		 * RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
-		 *RequestValidator.validateZip(atpRequest.getZip(),true);
-		 */
-		RequestValidator.validateSkus(atpRequest.getProducts(),true);
-		
-	}
-	
+		RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
+		RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
+		RequestValidator.validateZip(atpRequest.getZip(), true);
 
-	//-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378---------------------
-	private void tempfixCIW9378(AvailableToPromiseRequest atpRequest) {
-		//-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378---------------------
-		//--this is temp fix to hide UI error until BigC UI fix that their front end code
-		final String defaultLatitude = "29.8308828";
-	    final String defaultLongitude = "-95.3858507";
-	    final String defaultZip = "77022";
-		if(atpRequest.getZip() == null || atpRequest.getZip().length() != 5) {
-			logger.info("Invalid zip {}",atpRequest.getZip());
-			atpRequest.setZip(defaultZip);
-		}
-		if(atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
-			logger.info("Invalid Latitude {}",atpRequest.getLatitude());
-			atpRequest.setLatitude(defaultLatitude);
-			atpRequest.setLongitude(defaultLongitude);
-		}
-		if(atpRequest.getLongitude()== null || atpRequest.getLongitude().length() == 0) {
-			logger.info("Invalid Longitude {}",atpRequest.getLongitude());
-			atpRequest.setLatitude(defaultLatitude);
-			atpRequest.setLongitude(defaultLongitude);
-		}
-	    try {
-	        Double.parseDouble(atpRequest.getLatitude());
-	    } catch (NumberFormatException nfe) {
-	    	logger.info("Invalid Latitude {}",atpRequest.getLatitude());
-			atpRequest.setLatitude(defaultLatitude);
-			atpRequest.setLongitude(defaultLongitude);
-	    }
-	    try {
-	        Double.parseDouble(atpRequest.getLongitude());
-	    } catch (NumberFormatException nfe) {
-	    	logger.info("Invalid Longitude {}",atpRequest.getLongitude());
-			atpRequest.setLatitude(defaultLatitude);
-			atpRequest.setLongitude(defaultLongitude);
-	    }
+		RequestValidator.validateSkus(atpRequest.getProducts(), true);
+
 	}
 
-	private InventoryAvailableResponse getInventoryAvailable(String dlLocation , List<String> puLocations, AvailableToPromiseRequest atpRequest){
+	/*
+	 * // -----------------temp fix for //
+	 * https://conns.atlassian.net/browse/CIW-9378--------------------- private void
+	 * tempfixCIW9378(AvailableToPromiseRequest atpRequest) { //
+	 * -----------------temp fix for //
+	 * https://conns.atlassian.net/browse/CIW-9378--------------------- // --this is
+	 * temp fix to hide UI error until BigC UI fix that their front end // code
+	 * final String defaultLatitude = "29.8308828"; final String defaultLongitude =
+	 * "-95.3858507"; final String defaultZip = "77022"; if (atpRequest.getZip() ==
+	 * null || atpRequest.getZip().length() != 5) { logger.info("Invalid zip {}",
+	 * atpRequest.getZip()); atpRequest.setZip(defaultZip); } if
+	 * (atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0)
+	 * { logger.info("Invalid Latitude {}", atpRequest.getLatitude());
+	 * atpRequest.setLatitude(defaultLatitude);
+	 * atpRequest.setLongitude(defaultLongitude); } if (atpRequest.getLongitude() ==
+	 * null || atpRequest.getLongitude().length() == 0) {
+	 * logger.info("Invalid Longitude {}", atpRequest.getLongitude());
+	 * atpRequest.setLatitude(defaultLatitude);
+	 * atpRequest.setLongitude(defaultLongitude); } try {
+	 * Double.parseDouble(atpRequest.getLatitude()); } catch (NumberFormatException
+	 * nfe) { logger.info("Invalid Latitude {}", atpRequest.getLatitude());
+	 * atpRequest.setLatitude(defaultLatitude);
+	 * atpRequest.setLongitude(defaultLongitude); } try {
+	 * Double.parseDouble(atpRequest.getLongitude()); } catch (NumberFormatException
+	 * nfe) { logger.info("Invalid Longitude {}", atpRequest.getLongitude());
+	 * atpRequest.setLatitude(defaultLatitude);
+	 * atpRequest.setLongitude(defaultLongitude); } }
+	 */
+
+	private InventoryAvailableResponse getInventoryAvailable(String dlLocation, List<String> puLocations,
+			AvailableToPromiseRequest atpRequest) {
 		InventoryAvailableRequest invRequest = new InventoryAvailableRequest();
 		invRequest.setReqID(atpRequest.getReqID());
 		invRequest.setDL_Location(dlLocation);
@@ -248,12 +235,12 @@ public class AvailableToPromiseController extends RequestController {
 		}
 		return invRes;
 	}
-	
+
 	private DeliveryDateResponse getDeliveryDate(LocationDTO locationDTO, AvailableToPromiseRequest atpRequest) {
 		DeliveryDateRequest ddRequest = new DeliveryDateRequest();
 		ddRequest.setReqID(atpRequest.getReqID());
 		ddRequest.setDL_Location(locationDTO.getDLLocation());
-		ddRequest.setZipcode(atpRequest.getZip()); ///Request zip or location Zip
+		ddRequest.setZipcode(atpRequest.getZip()); /// Request zip or location Zip
 		ddRequest.setSKU(atpRequest.getProducts());
 		DeliveryDateResponse ddRes = null;
 		logger.debug("DeliveryDateRequest to DD Lambda: {}", ddRequest);
@@ -273,6 +260,5 @@ public class AvailableToPromiseController extends RequestController {
 		}
 		return ddRes;
 	}
-
 
 }

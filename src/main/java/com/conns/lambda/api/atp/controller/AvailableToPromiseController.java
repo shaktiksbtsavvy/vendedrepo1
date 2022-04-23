@@ -177,10 +177,8 @@ public class AvailableToPromiseController extends RequestController {
 		/*	temp fix for https://conns.atlassian.net/browse/CIW-9378
 		 * RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
 		 * RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
+		 *RequestValidator.validateZip(atpRequest.getZip(),true);
 		 */
-		
-		
-		RequestValidator.validateZip(atpRequest.getZip(),true);
 		RequestValidator.validateSkus(atpRequest.getProducts(),true);
 		
 	}

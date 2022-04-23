@@ -198,22 +198,26 @@ public class AvailableToPromiseController extends RequestController {
 		if(atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
 			logger.info("Invalid Latitude {}",atpRequest.getLatitude());
 			atpRequest.setLatitude(defaultLatitude);
+			atpRequest.setLongitude(defaultLongitude);
 		}
 		if(atpRequest.getLongitude()== null || atpRequest.getLongitude().length() == 0) {
 			logger.info("Invalid Longitude {}",atpRequest.getLongitude());
+			atpRequest.setLatitude(defaultLatitude);
 			atpRequest.setLongitude(defaultLongitude);
 		}
 	    try {
 	        Double.parseDouble(atpRequest.getLatitude());
 	    } catch (NumberFormatException nfe) {
 	    	logger.info("Invalid Latitude {}",atpRequest.getLatitude());
-	    	atpRequest.setLatitude(defaultLatitude);
+			atpRequest.setLatitude(defaultLatitude);
+			atpRequest.setLongitude(defaultLongitude);
 	    }
 	    try {
 	        Double.parseDouble(atpRequest.getLongitude());
 	    } catch (NumberFormatException nfe) {
 	    	logger.info("Invalid Longitude {}",atpRequest.getLongitude());
-	    	atpRequest.setLongitude(defaultLongitude);
+			atpRequest.setLatitude(defaultLatitude);
+			atpRequest.setLongitude(defaultLongitude);
 	    }
 	}
 

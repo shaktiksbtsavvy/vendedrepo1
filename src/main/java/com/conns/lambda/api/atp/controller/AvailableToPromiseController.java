@@ -36,6 +36,8 @@ public class AvailableToPromiseController extends RequestController {
 	private static final Logger logger = LogManager.getLogger(AvailableToPromiseController.class);
 	private static final AvailableToPromiseDao dao = new AvailableToPromiseDao();
 	private static final ResponseBuilder responseBuilder = new ResponseBuilder();
+	private static final String defaultLatitude = "29.8308828";
+    private static final String defaultLongitude = "-95.3858507";
 
 	private AvailableToPromiseController() {
 	}
@@ -97,7 +99,23 @@ public class AvailableToPromiseController extends RequestController {
 		}
 		p1.end();
 		logger.debug("Request Body Mapped with sku list {}", atpRequest.getProducts());
+		
+		
 
+		//-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378---------------------
+	    try {
+	        Double.parseDouble(atpRequest.getLatitude());
+	    } catch (NumberFormatException nfe) {
+	    	atpRequest.setLatitude(defaultLatitude);
+	    }
+	    try {
+	        Double.parseDouble(atpRequest.getLongitude());
+	    } catch (NumberFormatException nfe) {
+	    	atpRequest.setLongitude(defaultLongitude);
+	    }
+	    //-----------------temp fix for https://conns.atlassian.net/browse/CIW-9378--------------------
+	    
+	    
 		
 		Performance p2 = new Performance("Get Locations Using Lambda", logger);
 		p2.start();
@@ -168,25 +186,14 @@ public class AvailableToPromiseController extends RequestController {
 
 	private void validateRequest(AvailableToPromiseRequest atpRequest) throws InvalidRequestWarning {
 
-		RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
-		RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
+		/*	temp fix for https://conns.atlassian.net/browse/CIW-9378
+		 * RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
+		 * RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
+		 */
+		
+		
 		RequestValidator.validateZip(atpRequest.getZip(),true);
 		RequestValidator.validateSkus(atpRequest.getProducts(),true);
-//		if (atpRequest.getLatitude() == null || atpRequest.getLatitude().length() == 0) {
-//			throwInvalidRequestException("Latitude is required.");
-//		}
-//		if (!NumberUtil.isNumeric(atpRequest.getLatitude()) || Double.parseDouble(atpRequest.getLatitude()) > 90 || Double.parseDouble(atpRequest.getLatitude()) < -90 ) {
-//			throwInvalidRequestException("Latitude must be between -90 and 90.");
-//		}
-//		if (atpRequest.getLongitude() == null || atpRequest.getLongitude().length() == 0) {
-//			throwInvalidRequestException("Longitude is required.");
-//		}
-//		if (!NumberUtil.isNumeric(atpRequest.getLongitude()) || Double.parseDouble(atpRequest.getLongitude()) > 180 || Double.parseDouble(atpRequest.getLongitude()) < -180 ) {
-//			throwInvalidRequestException("Longitude must be between -180 and 180.");
-//		}
-//		if (atpRequest.getZip() == null || atpRequest.getZip() .length() == 0) {
-//			throwInvalidRequestException("Zipcode is required.");
-//		}
 		
 	}
 	

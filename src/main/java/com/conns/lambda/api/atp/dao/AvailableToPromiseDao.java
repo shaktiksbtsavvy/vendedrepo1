@@ -108,7 +108,7 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 //		return new LocationDTO(storeLocations, whLocations);
 //	}
 
-	public LocationDTO getLocationsUsingLambda(String requestId, String lati, String longi, Double distance)
+	public LocationDTO getLocationsUsingLambda(String requestId, String lati, String longi, String zip, Double distance)
 			throws InternalServiceException {
 		Double distanceThresh = distance != null && distance > 0 ? distance : Double.parseDouble(DISTANCETHRESHOLD);
 
@@ -117,7 +117,9 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		HashMap<String, Location> storeLocations = new HashMap<String, Location>();
 		HashMap<String, Location> whLocations = new HashMap<String, Location>();
 
-		GeoLocationRequest geoReq = new GeoLocationRequest(requestId, lati, longi, null,
+		//https://conns.atlassian.net/browse/CIW-9380
+		//Current ATP API is using “lat/long” value to determine nearby pickup locations and use that for “local inventory” call. 
+		GeoLocationRequest geoReq = new GeoLocationRequest(requestId, null, null, zip,
 				distanceThresh > 0 ? distanceThresh : null);
 
 		GeoStoreResponse geoRes;

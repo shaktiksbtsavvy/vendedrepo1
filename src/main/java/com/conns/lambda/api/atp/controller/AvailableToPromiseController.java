@@ -110,7 +110,7 @@ public class AvailableToPromiseController extends RequestController {
 		Performance p2 = new Performance("Get Locations Using Lambda", logger);
 		p2.start();
 		LocationDTO locationDTO = dao.getLocationsUsingLambda(atpRequest.getReqID(), atpRequest.getLatitude(),
-				atpRequest.getLongitude(), atpRequest.getDistance());
+				atpRequest.getLongitude(), atpRequest.getZip(), atpRequest.getDistance());
 		p2.end();
 
 

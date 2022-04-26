@@ -170,8 +170,8 @@ public class AvailableToPromiseController extends RequestController {
 
 	private void validateRequest(AvailableToPromiseRequest atpRequest) throws InvalidRequestWarning {
 
-		RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
-		RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
+//		RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
+//		RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
 		RequestValidator.validateZip(atpRequest.getZip(), true);
 
 		RequestValidator.validateSkus(atpRequest.getProducts(), true);

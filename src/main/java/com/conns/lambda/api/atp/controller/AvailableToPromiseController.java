@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +41,8 @@ public class AvailableToPromiseController extends RequestController {
 	private static final Logger logger = LogManager.getLogger(AvailableToPromiseController.class);
 	private static final AvailableToPromiseDao dao = new AvailableToPromiseDao();
 	private static final ResponseBuilder responseBuilder = new ResponseBuilder();
+	private static final String regex5zip = "^[0-9]{5}$";
+	private static final Pattern pattern5Zip = Pattern.compile(regex5zip);
 
 	private AvailableToPromiseController() {
 	}
@@ -105,13 +109,11 @@ public class AvailableToPromiseController extends RequestController {
 		p1.end();
 		logger.debug("Request Body Mapped with sku list {}", atpRequest.getProducts());
 
-
 		Performance p2 = new Performance("Get Locations Using Lambda", logger);
 		p2.start();
 		LocationDTO locationDTO = dao.getLocationsUsingLambda(atpRequest.getReqID(), atpRequest.getLatitude(),
 				atpRequest.getLongitude(), atpRequest.getZip(), atpRequest.getDistance());
 		p2.end();
-
 
 		final AvailableToPromiseRequest atpReq = atpRequest;
 
@@ -171,7 +173,36 @@ public class AvailableToPromiseController extends RequestController {
 
 //		RequestValidator.validateLatitude(atpRequest.getLatitude(), true);
 //		RequestValidator.validateLongitude(atpRequest.getLongitude(), true);
-		RequestValidator.validateZip(atpRequest.getZip(), true);
+//      RequestValidator.validateZip(atpRequest.getZip(), true);
+
+		if (atpRequest.getZip() != null) {
+			Matcher matcher = pattern5Zip.matcher(atpRequest.getZip());
+			if (!matcher.matches()) {
+				atpRequest.setZip(null);
+			}
+		}
+		try {
+			if (atpRequest.getLatitude() != null) {
+				double d = Double.parseDouble(atpRequest.getLatitude());
+
+				if (d > 90 || d < -90) {
+					atpRequest.setLatitude(null);
+				}
+			}
+		} catch (NumberFormatException nfe) {
+			atpRequest.setLatitude(null);
+		}
+
+		try {
+			if (atpRequest.getLongitude() != null) {
+				double d = Double.parseDouble(atpRequest.getLongitude());
+				if (d > 180 || d < -180) {
+					atpRequest.setLongitude(null);
+				}
+			}
+		} catch (NumberFormatException nfe) {
+			atpRequest.setLongitude(null);
+		}
 
 		RequestValidator.validateSkus(atpRequest.getProducts(), true);
 

@@ -43,6 +43,7 @@ public class AvailableToPromiseController extends RequestController {
 	private static final ResponseBuilder responseBuilder = new ResponseBuilder();
 	private static final String regex5zip = "^[0-9]{5}$";
 	private static final Pattern pattern5Zip = Pattern.compile(regex5zip);
+	private static final String defaultZip = "77022";
 
 	private AvailableToPromiseController() {
 	}
@@ -178,7 +179,7 @@ public class AvailableToPromiseController extends RequestController {
 		if (atpRequest.getZip() != null) {
 			Matcher matcher = pattern5Zip.matcher(atpRequest.getZip());
 			if (!matcher.matches()) {
-				atpRequest.setZip(null);
+				atpRequest.setZip(defaultZip);
 			}
 		}
 		try {

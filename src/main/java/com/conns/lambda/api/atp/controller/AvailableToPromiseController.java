@@ -181,6 +181,8 @@ public class AvailableToPromiseController extends RequestController {
 			if (!matcher.matches()) {
 				atpRequest.setZip(defaultZip);
 			}
+		} else {
+			atpRequest.setZip(defaultZip);
 		}
 		try {
 			if (atpRequest.getLatitude() != null) {

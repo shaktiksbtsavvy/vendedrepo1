@@ -22,12 +22,13 @@ public class DeliveryATPResponse {
 	 * @param zip
 	 * @param availableQty
 	 */
-	public DeliveryATPResponse(String sku, String zip, String availableQty, String atpDate) {
+	public DeliveryATPResponse(String sku, String zip, String availableQty, String atpDate, String onHand) {
 		super();
 		this.sku = sku;
 		this.zip = zip;
 		this.availableQty = availableQty != null ? Double.parseDouble(availableQty) : 0;
 		this.atpDetails = new ATPDetailsResponse(atpDate);
+		this.onhandFlag = onHand;
 	}
 
 
@@ -61,6 +62,9 @@ public class DeliveryATPResponse {
 	
 	@JsonProperty("delivery_method")
 	private String deliveryMethod;
+	
+	@JsonProperty("onhand_flag")
+	private String onhandFlag;
 	
 	@JsonProperty("lead_time")
 	private Double leadTime;
@@ -157,6 +161,14 @@ public class DeliveryATPResponse {
 
 	public void setAtpDetails(ATPDetailsResponse atpDetails) {
 		this.atpDetails = atpDetails;
+	}
+
+	public String getOnhandFlag() {
+		return onhandFlag;
+	}
+
+	public void setOnhandFlag(String onhandFlag) {
+		this.onhandFlag = onhandFlag;
 	}
 
 }

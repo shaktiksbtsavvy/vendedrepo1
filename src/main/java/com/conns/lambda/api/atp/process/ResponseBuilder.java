@@ -141,8 +141,8 @@ public class ResponseBuilder {
 							dateAvailble = nextDDDate.get(skuName);
 						}
 						logger.debug("9-dateAvailble: {}.", dateAvailble);
-						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
-								dateAvailble));
+						
+						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),dateAvailble, lr.getOnhandFlag()));
 						// }
 
 					}

@@ -34,6 +34,8 @@ public class ResponseBuilder {
 	protected static final String SUCCESS = "Success";
 	protected static final String _WH = "WH";
 	protected static final String _STR = "STR";
+	protected static final String _ONHANDFLAG_Y = "Y";
+	protected static final String _ONHANDFLAG_RY = "RY";
 	private static final Logger logger = LogManager.getLogger(ResponseBuilder.class);
 
 	public ResponseBody buildErrorResponseObject(int code, String message, String errorDetails) {
@@ -135,8 +137,11 @@ public class ResponseBuilder {
 						// logger.debug("8-Selected warehouse location: {}.", loc != null ?
 						// loc.toString() : "");
 						// if (loc != null) { //Waehouse lookup is based on zipcode, not on Geo
-						if (lr.getOnhandFlag().equalsIgnoreCase("Y")) {
+						if (lr.getOnhandFlag().equalsIgnoreCase(_ONHANDFLAG_Y)) {
 							dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
+						} else if (lr.getOnhandFlag().equalsIgnoreCase(_ONHANDFLAG_RY)) {
+							//CIW-9941
+							dateAvailble = nddr != null ? nddr.getRdc_nextDeliveryDate() : null;
 						} else {
 							dateAvailble = nextDDDate.get(skuName);
 						}

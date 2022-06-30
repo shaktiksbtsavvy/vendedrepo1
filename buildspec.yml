@@ -7,6 +7,9 @@ artifacts:
 phases:
   build:
     commands:
+    - ls -l
+    - ls -l $CODEBUILD_SRC_DIR
+    - mvn install:install-file -Dfile=$CODEBUILD_SRC_DIR/src/main/resources/apiframework-1.0.0.jar -DgroupId=com.conns.lambda.common -DartifactId=apiframework -Dversion=1.0.0 -Dpackaging=jar
     - sam build
   post_build:
     commands:

@@ -71,8 +71,8 @@
 			<groupId>com.conns.lambda.common</groupId>
 			<artifactId>apiframework</artifactId>
 			<version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/apiframework-1.0.0.jar</systemPath>
+			<!-- <scope>system</scope>
+			<systemPath>${project.basedir}/src/main/resources/apiframework-1.0.0.jar</systemPath> -->
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb -->
 		<dependency>

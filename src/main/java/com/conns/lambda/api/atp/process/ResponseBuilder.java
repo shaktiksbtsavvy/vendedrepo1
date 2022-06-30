@@ -68,6 +68,15 @@ public class ResponseBuilder {
 	 * @param reqID
 	 * @return
 	 */
+	/**
+	 * @param code
+	 * @param message
+	 * @param request
+	 * @param invRes
+	 * @param ddRes
+	 * @param locationDTO
+	 * @return
+	 */
 	protected ResponseBody buildResponseObject(int code, String message, AvailableToPromiseRequest request,
 			InventoryAvailableResponse invRes, DeliveryDateResponse ddRes, LocationDTO locationDTO) {
 
@@ -113,10 +122,14 @@ public class ResponseBuilder {
 						logger.debug("7.1-inventory store location is null.");
 						loc = whLocations.get(lr.getLocationNumber());
 					}
-					if ((lr != null && lr.getLocationType().equalsIgnoreCase(_STR) && loc.getPickup() == 1.0) //WH are already included in STRs
+					if ((lr != null && lr.getLocationType().equalsIgnoreCase(_STR) && loc.getPickup() == 1.0) // WH are
+																												// already
+																												// included
+																												// in
+																												// STRs
 //							|| (lr != null && loc != null && lr.getLocationType().equalsIgnoreCase(_WH) && loc.getPickup() == 1.0
 //									&& lr.getOnhandFlag().equalsIgnoreCase("Y"))
-							) {
+					) {
 						logger.debug("8-Selected store location: {}.", loc != null ? loc.toString() : "");
 						if (loc != null) {
 							// pickupAtp.add(new PickupATPResponse(skuName, getTodayInCST(),
@@ -124,10 +137,32 @@ public class ResponseBuilder {
 //							pickupAtp.add(new PickupATPResponse(skuName, lr.getLocationType(), loc.getLongitude(),
 //									loc.getLatitude(), lr.getLocationNumber(), loc.getDistance(), lr.getQtyAvailable(),
 //									getTodayInCST()));
-							pickupAtp.add(new PickupATPResponse(skuName, loc.getStoreResponse().getStoreUrl(), lr.getLocationType(), loc.getStoreResponse().getStoreName(), loc.getLongitude(), loc.getLatitude(), 
-									loc.getStoreResponse().getStorePhone(), lr.getLocationNumber(), loc.getDistance(), getTodayInCST(), lr.getQtyAvailable(), 
-									loc.getStoreResponse().getStoreZip(), loc.getStoreResponse().getStoreState(), loc.getStoreResponse().getStoreAddressln2(),
-									loc.getStoreResponse().getStoreAddressln1(), loc.getStoreResponse().getStoreCity(), loc.getStoreResponse().getStoreClosingTime(),loc.getStoreResponse().getStoreHours()));
+
+							
+							//https://conns.atlassian.net/browse/CIW-10195
+							String qtyAvailable = lr.getQtyAvailable();
+							String qtyStr = "";
+							try {
+								double qty = Double.parseDouble(qtyAvailable);
+								if (qty == 1) {
+									qty = 0;
+								}
+								qtyStr = String.valueOf(qty);
+							} catch (NumberFormatException nfe) {
+								qtyStr = qtyAvailable;
+							}
+							//https://conns.atlassian.net/browse/CIW-10195
+
+							
+							pickupAtp.add(new PickupATPResponse(skuName, loc.getStoreResponse().getStoreUrl(),
+									lr.getLocationType(), loc.getStoreResponse().getStoreName(), loc.getLongitude(),
+									loc.getLatitude(), loc.getStoreResponse().getStorePhone(), lr.getLocationNumber(),
+									loc.getDistance(), getTodayInCST(), qtyStr,
+									loc.getStoreResponse().getStoreZip(), loc.getStoreResponse().getStoreState(),
+									loc.getStoreResponse().getStoreAddressln2(),
+									loc.getStoreResponse().getStoreAddressln1(), loc.getStoreResponse().getStoreCity(),
+									loc.getStoreResponse().getStoreClosingTime(),
+									loc.getStoreResponse().getStoreHours()));
 						}
 
 					}
@@ -140,14 +175,15 @@ public class ResponseBuilder {
 						if (lr.getOnhandFlag().equalsIgnoreCase(_ONHANDFLAG_Y)) {
 							dateAvailble = nddr != null ? nddr.getNextDeliveryDate() : null;
 						} else if (lr.getOnhandFlag().equalsIgnoreCase(_ONHANDFLAG_RY)) {
-							//CIW-9941
+							// CIW-9941
 							dateAvailble = nddr != null ? nddr.getRdc_nextDeliveryDate() : null;
 						} else {
 							dateAvailble = nextDDDate.get(skuName);
 						}
 						logger.debug("9-dateAvailble: {}.", dateAvailble);
-						
-						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),dateAvailble, lr.getOnhandFlag()));
+
+						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
+								dateAvailble, lr.getOnhandFlag()));
 						// }
 
 					}

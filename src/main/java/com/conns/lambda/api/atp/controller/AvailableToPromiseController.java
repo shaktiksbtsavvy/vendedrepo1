@@ -81,7 +81,7 @@ public class AvailableToPromiseController extends RequestController {
 			throws InvalidRequestWarning, InternalServiceException {
 		setRequestID(null);
 		String requestBody = apiRequest.getBody();
-		logger.debug("Request Body Received:{}", requestBody);
+		logger.debug("Request Body Received with upcs:{}", requestBody);
 
 		AvailableToPromiseRequest atpRequest = null;
 

@@ -1,6 +1,8 @@
 package com.conns.lambda.api.atp.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,9 +19,11 @@ import com.conns.lambda.api.atp.model.geo.StoreResponse;
 import com.conns.lambda.common.dao.DaxDataAccessObject;
 import com.conns.lambda.common.dao.LambdaDataAccessObject;
 import com.conns.lambda.common.exception.InternalServiceException;
+import com.conns.lambda.common.exception.InvalidRequestWarning;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.amazonaws.services.dynamodbv2.document.Item;
 
 public class AvailableToPromiseDao extends DaxDataAccessObject implements LambdaDataAccessObject {
 	private static final ObjectMapper mapper = new ObjectMapper(); // Use single instance of ObjectMapper in your code.
@@ -54,6 +58,13 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 			? System.getenv(_GEOLOCATIONFUN).trim()
 			: null; // INVTABLENAME
 	private static final String ddFunction = System.getenv(_DDFUN) != null ? System.getenv(_DDFUN).trim() : null; // INVTABLENAME
+	
+	private static final String UPCTABLE = System.getenv("UPCTABLE") != null
+			? System.getenv("UPCTABLE").trim()
+			: null;
+	private static final String UPC_KEY = "upc";
+	private static final String SKU_KEY = "sku";
+	
 
 	private static final AWSLambda awsLambda = AWSLambdaClientBuilder.standard().build();
 
@@ -151,6 +162,27 @@ public class AvailableToPromiseDao extends DaxDataAccessObject implements Lambda
 		return new LocationDTO(storeLocations, whLocations);
 	}
 
+	
+	public List<String> getSkusForUpcs(List<String> upcList) throws InternalServiceException, InvalidRequestWarning {
+		
+		if(upcList == null || upcList.size() ==0 ) {
+			throw new InvalidRequestWarning("Invalid UPC list.");
+		}
+		List<String> skuList = new ArrayList<String>();
+		
+		List<Item> items = getItems(UPCTABLE, UPC_KEY, upcList);
+		
+		if(items == null || items.size() != upcList.size() ) {
+			throw new InvalidRequestWarning("List contain invalid UPCs.");
+		}
+		
+		for(Item i: items) {
+			skuList.add(i.getString(SKU_KEY));
+		}
+		
+		return skuList;
+		
+	}
 	/*
 	 * public Set<LocationMaster> loadLocations() throws InternalServerError {
 	 * return loadLocations(true); }

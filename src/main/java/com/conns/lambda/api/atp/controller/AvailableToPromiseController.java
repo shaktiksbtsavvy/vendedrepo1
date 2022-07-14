@@ -93,6 +93,8 @@ public class AvailableToPromiseController extends RequestController {
 			try {
 				atpRequest = mapper.readValue(requestBody, AvailableToPromiseRequest.class);
 				atpRequest.setReqID(setRequestID(atpRequest.getReqID()));
+				
+				atpRequest = mapUPCs(atpRequest); //BPAD-154
 
 				validateRequest(atpRequest);
 
@@ -170,6 +172,22 @@ public class AvailableToPromiseController extends RequestController {
 				+ "}");
 	}
 
+	
+	private AvailableToPromiseRequest mapUPCs(AvailableToPromiseRequest atpRequest) throws InvalidRequestWarning, InternalServiceException {
+		
+		if(atpRequest.getProducts() != null && atpRequest.getProducts().size() > 0) {
+			return atpRequest;
+		}
+		
+		if(atpRequest.getUpcs() == null && atpRequest.getUpcs().size() == 0) {
+			return atpRequest;
+		}
+		
+		atpRequest.setProducts(dao.getSkusForUpcs(atpRequest.getUpcs())); 
+		
+		return atpRequest;
+	}
+	
 	private void validateRequest(AvailableToPromiseRequest atpRequest) throws InvalidRequestWarning {
 
 //		RequestValidator.validateLatitude(atpRequest.getLatitude(), true);

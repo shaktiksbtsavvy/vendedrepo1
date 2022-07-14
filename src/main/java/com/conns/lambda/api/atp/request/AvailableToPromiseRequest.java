@@ -8,7 +8,7 @@ import com.conns.lambda.common.util.RequestUtil;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AvailableToPromiseRequest extends ResponseBody{
 	
 	/**
@@ -23,6 +23,9 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	
 	@JsonProperty("products")
 	private List<String> products;
+	
+	@JsonProperty("upcs")
+	private List<String> upcs;
 	
 	@JsonProperty("latitude")
 	private String latitude;
@@ -106,5 +109,13 @@ public class AvailableToPromiseRequest extends ResponseBody{
 
 	public void setDistance(Double distance) {
 		this.distance = distance;
+	}
+
+	public List<String> getUpcs() {
+		return upcs;
+	}
+
+	public void setUpcs(List<String> upcs) {
+		this.upcs = upcs;
 	}
 }

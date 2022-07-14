@@ -55,6 +55,7 @@ Mappings:
       DDFUN: DeliveryDateApi-Dev
       GEOLOCATIONFUN: GeoLocationApi-Dev
       LOCATIONTABLE: TST_CONNS_LOCATION
+      UPCTABLE: TST_UPCSKU_MAP
       PROVISIONEDCONCURRECY: 1
     UAT: 
       FUNMEMORYSIZE: 5120
@@ -62,6 +63,7 @@ Mappings:
       DDFUN: DeliveryDateApi-UAT
       GEOLOCATIONFUN: GeoLocationApi-UAT
       LOCATIONTABLE: UAT_CONNS_LOCATION
+      UPCTABLE: UAT_UPCSKU_MAP
       PROVISIONEDCONCURRECY: 1
     Prod: 
       FUNMEMORYSIZE: 5120
@@ -69,6 +71,7 @@ Mappings:
       DDFUN: DeliveryDateApi-Prod
       GEOLOCATIONFUN: GeoLocationApi-Prod
       LOCATIONTABLE: PRD_CONNS_LOCATION
+      UPCTABLE: PRD_UPCSKU_MAP
       PROVISIONEDCONCURRECY: 2
   RegionMap: 
     us-east-1: 
@@ -131,4 +134,8 @@ Resources:
             - EnvMap
             - !Ref StageName
             - GEOLOCATIONFUN
+          UPCTABLE: !FindInMap
+            - EnvMap
+            - !Ref StageName
+            - UPCTABLE
           DAXENDPOINT:  !If [CreateEastResources, !FindInMap [EastRegEnvMap, !Ref StageName, DAXENDPOINT], !FindInMap [WestRegEnvMap, !Ref StageName, DAXENDPOINT]]

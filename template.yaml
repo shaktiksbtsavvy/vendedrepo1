@@ -26,15 +26,15 @@ Mappings:
     Dev: 
       DAXENDPOINT: daxs://dax-api-cluster-dev.x2sy7j.dax-clusters.us-east-1.amazonaws.com
       POLICYDAXRESOURCE: "arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-dev"
-      #POLICYDDBRESOURCE: ["arn:aws:dynamodb:us-east-1:203315843709:table/TST_CONNS_LOCATION"]
+      POLICYDDBRESOURCE: ["arn:aws:dynamodb:us-east-1:203315843709:table/TST_UPCSKU_MAP"]
     UAT: 
       DAXENDPOINT: daxs://dax-api-cluster-uat.x2sy7j.dax-clusters.us-east-1.amazonaws.com 
       POLICYDAXRESOURCE: "arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-uat"
-      #POLICYDDBRESOURCE: ["arn:aws:dynamodb:us-east-1:203315843709:table/UAT_CONNS_LOCATION"]
+      POLICYDDBRESOURCE: ["arn:aws:dynamodb:us-east-1:203315843709:table/UAT_UPCSKU_MAP"]
     Prod: 
       DAXENDPOINT: daxs://dax-api-cluster-prd.x2sy7j.dax-clusters.us-east-1.amazonaws.com 
       POLICYDAXRESOURCE: "arn:aws:dax:us-east-1:203315843709:cache/dax-api-cluster-prd"
-      #POLICYDDBRESOURCE: ["arn:aws:dynamodb:us-east-1:203315843709:table/PRD_CONNS_LOCATION"]
+      POLICYDDBRESOURCE: ["arn:aws:dynamodb:us-east-1:203315843709:table/PRD_UPCSKU_MAP"]
   WestRegEnvMap: 
     Dev: 
       DAXENDPOINT: daxs://dax-api-cluster-dev.8hlusu.dax-clusters.us-west-1.amazonaws.com #daxs://inventorytestcluster.yprieo.dax-clusters.us-west-1.amazonaws.com  
@@ -94,6 +94,17 @@ Resources:
       ProvisionedConcurrencyConfig:
         ProvisionedConcurrentExecutions: !FindInMap [EnvMap, !Ref StageName, PROVISIONEDCONCURRECY]
       Policies:   
+      - Statement:
+        - Sid: DAXLambdaAccessPolicy
+          Effect: Allow
+          Action:
+          - dax:*
+          Resource: !FindInMap [EnvMap, !Ref StageName, POLICYDAXRESOURCE]
+        - Sid: DYDBAccessPolicy
+          Effect: Allow
+          Action:
+          - dynamodb:*
+          Resource: !FindInMap [EnvMap, !Ref StageName, POLICYDDBRESOURCE]    
       - LambdaInvokePolicy:
           FunctionName: !FindInMap
                           - EnvMap

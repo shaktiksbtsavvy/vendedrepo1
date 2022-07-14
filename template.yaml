@@ -99,12 +99,12 @@ Resources:
           Effect: Allow
           Action:
           - dax:*
-          Resource: !FindInMap [EnvMap, !Ref StageName, POLICYDAXRESOURCE]
+          Resource: !FindInMap [EastRegEnvMap, !Ref StageName, POLICYDAXRESOURCE]
         - Sid: DYDBAccessPolicy
           Effect: Allow
           Action:
           - dynamodb:*
-          Resource: !FindInMap [EnvMap, !Ref StageName, POLICYDDBRESOURCE]    
+          Resource: !FindInMap [EastRegEnvMap, !Ref StageName, POLICYDDBRESOURCE]    
       - LambdaInvokePolicy:
           FunctionName: !FindInMap
                           - EnvMap

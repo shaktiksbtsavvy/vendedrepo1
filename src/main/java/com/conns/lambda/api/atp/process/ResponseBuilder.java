@@ -138,19 +138,19 @@ public class ResponseBuilder {
 //									loc.getLatitude(), lr.getLocationNumber(), loc.getDistance(), lr.getQtyAvailable(),
 //									getTodayInCST()));
 
+							String qtyAvailable = lr.getQtyAvailable();
+							String qtyStr = qtyAvailable;
 							
 							//https://conns.atlassian.net/browse/CIW-10195
-							String qtyAvailable = lr.getQtyAvailable();
-							String qtyStr = "";
-							try {
-								double qty = Double.parseDouble(qtyAvailable);
-								if (qty == 1) {
-									qty = 0;
-								}
-								qtyStr = String.valueOf(qty);
-							} catch (NumberFormatException nfe) {
-								qtyStr = qtyAvailable;
-							}
+//							try {
+//								double qty = Double.parseDouble(qtyAvailable);
+//								if (qty == 1) {
+//									qty = 0;
+//								}
+//								qtyStr = String.valueOf(qty);
+//							} catch (NumberFormatException nfe) {
+//								qtyStr = qtyAvailable;
+//							}
 							//https://conns.atlassian.net/browse/CIW-10195
 
 							

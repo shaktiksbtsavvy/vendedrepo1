@@ -31,6 +31,22 @@ public class DeliveryATPResponse {
 		this.onhandFlag = onHand;
 	}
 
+	
+	/**
+	 * @param sku
+	 * @param zip
+	 * @param availableQty
+	 */
+	public DeliveryATPResponse(String sku, String zip, String availableQty, String atpDate, String onHand,  String inventoryLocationType, String inventoryLocation) {
+		super();
+		this.sku = sku;
+		this.zip = zip;
+		this.availableQty = availableQty != null ? Double.parseDouble(availableQty) : 0;
+		this.atpDetails = new ATPDetailsResponse(atpDate);
+		this.onhandFlag = onHand;
+		this.inventoryLocation = inventoryLocation;
+		this.inventoryLocationType = inventoryLocationType;
+	}
 
 	/**
 	 * 

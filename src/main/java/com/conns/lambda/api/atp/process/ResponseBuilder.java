@@ -182,8 +182,13 @@ public class ResponseBuilder {
 						}
 						logger.debug("9-dateAvailble: {}.", dateAvailble);
 
+						//https://conns.atlassian.net/browse/CIW-11856
+//						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
+//								dateAvailble, lr.getOnhandFlag()));
 						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
-								dateAvailble, lr.getOnhandFlag()));
+								dateAvailble, lr.getOnhandFlag(), lr.getLocationType(),loc.getStoreResponse().getStoreName() ));
+						//https://conns.atlassian.net/browse/CIW-11856
+						
 						// }
 
 					}

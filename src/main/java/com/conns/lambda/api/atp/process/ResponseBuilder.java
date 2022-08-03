@@ -140,8 +140,8 @@ public class ResponseBuilder {
 
 							String qtyAvailable = lr.getQtyAvailable();
 							String qtyStr = qtyAvailable;
-							
-							//https://conns.atlassian.net/browse/CIW-10195
+
+							// https://conns.atlassian.net/browse/CIW-10195
 //							try {
 //								double qty = Double.parseDouble(qtyAvailable);
 //								if (qty == 1) {
@@ -151,15 +151,13 @@ public class ResponseBuilder {
 //							} catch (NumberFormatException nfe) {
 //								qtyStr = qtyAvailable;
 //							}
-							//https://conns.atlassian.net/browse/CIW-10195
+							// https://conns.atlassian.net/browse/CIW-10195
 
-							
 							pickupAtp.add(new PickupATPResponse(skuName, loc.getStoreResponse().getStoreUrl(),
 									lr.getLocationType(), loc.getStoreResponse().getStoreName(), loc.getLongitude(),
 									loc.getLatitude(), loc.getStoreResponse().getStorePhone(), lr.getLocationNumber(),
-									loc.getDistance(), getTodayInCST(), qtyStr,
-									loc.getStoreResponse().getStoreZip(), loc.getStoreResponse().getStoreState(),
-									loc.getStoreResponse().getStoreAddressln2(),
+									loc.getDistance(), getTodayInCST(), qtyStr, loc.getStoreResponse().getStoreZip(),
+									loc.getStoreResponse().getStoreState(), loc.getStoreResponse().getStoreAddressln2(),
 									loc.getStoreResponse().getStoreAddressln1(), loc.getStoreResponse().getStoreCity(),
 									loc.getStoreResponse().getStoreClosingTime(),
 									loc.getStoreResponse().getStoreHours()));
@@ -182,14 +180,18 @@ public class ResponseBuilder {
 						}
 						logger.debug("9-dateAvailble: {}.", dateAvailble);
 
-						//https://conns.atlassian.net/browse/CIW-11856
+						// https://conns.atlassian.net/browse/CIW-11856
 //						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
 //								dateAvailble, lr.getOnhandFlag()));
-						String dcName = loc != null ? (loc.getStoreResponse() != null ? loc.getStoreResponse().getStoreName() :"") :"";
-						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
-								dateAvailble, lr.getOnhandFlag(), lr.getLocationType(),dcName ));
-						//https://conns.atlassian.net/browse/CIW-11856
 						
+						Location whLoc = loc != null ? loc : whLocations.get(lr.getLocationNumber());
+						
+						String dcName = whLoc != null ? (whLoc.getStoreResponse() != null ? whLoc.getStoreResponse().getStoreName() : "") : "";
+						
+						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
+								dateAvailble, lr.getOnhandFlag(), lr.getLocationType(), dcName));
+						// https://conns.atlassian.net/browse/CIW-11856
+
 						// }
 
 					}

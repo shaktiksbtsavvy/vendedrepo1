@@ -185,6 +185,7 @@ public class ResponseBuilder {
 //								dateAvailble, lr.getOnhandFlag()));
 						
 						Location whLoc = loc != null ? loc : whLocations.get(lr.getLocationNumber());
+						logger.debug("Warehouse location :{} is :{} in GeoLocation Table", lr.getLocationNumber(), whLoc);
 						
 						String dcName = whLoc != null ? (whLoc.getStoreResponse() != null ? whLoc.getStoreResponse().getStoreName() : "") : "";
 						

@@ -185,7 +185,7 @@ public class ResponseBuilder {
 						//https://conns.atlassian.net/browse/CIW-11856
 //						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
 //								dateAvailble, lr.getOnhandFlag()));
-						String dcName = loc.getStoreResponse() != null ? loc.getStoreResponse().getStoreName() :"";
+						String dcName = loc != null ? (loc.getStoreResponse() != null ? loc.getStoreResponse().getStoreName() :"") :"";
 						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
 								dateAvailble, lr.getOnhandFlag(), lr.getLocationType(),dcName ));
 						//https://conns.atlassian.net/browse/CIW-11856

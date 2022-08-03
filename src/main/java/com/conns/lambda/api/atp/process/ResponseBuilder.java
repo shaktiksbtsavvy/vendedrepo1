@@ -184,13 +184,13 @@ public class ResponseBuilder {
 //						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
 //								dateAvailble, lr.getOnhandFlag()));
 						
-						Location whLoc = loc != null ? loc : whLocations.get(lr.getLocationNumber());
-						logger.debug("Warehouse location :{} is :{} in GeoLocation Table", lr.getLocationNumber(), whLoc);
-						
-						String dcName = whLoc != null ? (whLoc.getStoreResponse() != null ? whLoc.getStoreResponse().getStoreName() : "") : "";
+//						Location whLoc = loc != null ? loc : whLocations.get(lr.getLocationNumber());
+//						logger.debug("Warehouse location :{} is :{} in GeoLocation Table", lr.getLocationNumber(), whLoc);
+//
+//						String dcName = whLoc != null ? (whLoc.getStoreResponse() != null ? whLoc.getStoreResponse().getStoreName() : "") : "";
 						
 						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
-								dateAvailble, lr.getOnhandFlag(), lr.getLocationType(), dcName));
+								dateAvailble, lr.getOnhandFlag(), lr.getLocationType(), lr.getLocationNumber()));
 						// https://conns.atlassian.net/browse/CIW-11856
 
 						// }

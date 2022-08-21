@@ -179,11 +179,9 @@ public class AvailableToPromiseController extends RequestController {
 			return atpRequest;
 		}
 		
-		if(atpRequest.getUpcs() == null && atpRequest.getUpcs().size() == 0) {
-			return atpRequest;
+		if(atpRequest.getUpcs() != null && atpRequest.getUpcs().size() > 0) {
+			atpRequest.setProducts(dao.getSkusForUpcs(atpRequest.getUpcs()));
 		}
-		
-		atpRequest.setProducts(dao.getSkusForUpcs(atpRequest.getUpcs())); 
 		
 		return atpRequest;
 	}

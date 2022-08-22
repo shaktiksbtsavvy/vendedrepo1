@@ -82,8 +82,7 @@ Resources:
       Handler: com.conns.lambda.api.atp.AvailableToPromiseHandler::handleRequest
       Runtime: java11
       PackageType: Zip
-      Policies:   
-      - Statement:
+      Policies:
       - Statement:
         - Sid: DAXLambdaAccessPolicy
           Effect: Allow

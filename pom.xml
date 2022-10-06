@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.conns.lambda.api</groupId>
-	<artifactId>atp</artifactId>
+	<artifactId>lambda-inv-availabletopromise_api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 

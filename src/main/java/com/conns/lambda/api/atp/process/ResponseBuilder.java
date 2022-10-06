@@ -2,6 +2,7 @@ package com.conns.lambda.api.atp.process;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -183,17 +184,20 @@ public class ResponseBuilder {
 						// https://conns.atlassian.net/browse/CIW-11856
 //						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
 //								dateAvailble, lr.getOnhandFlag()));
-						
+
 //						Location whLoc = loc != null ? loc : whLocations.get(lr.getLocationNumber());
 //						logger.debug("Warehouse location :{} is :{} in GeoLocation Table", lr.getLocationNumber(), whLoc);
 //
 //						String dcName = whLoc != null ? (whLoc.getStoreResponse() != null ? whLoc.getStoreResponse().getStoreName() : "") : "";
-						
-						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
-								dateAvailble, lr.getOnhandFlag(), lr.getLocationType(), lr.getLocationNumber()));
-						// https://conns.atlassian.net/browse/CIW-11856
 
-						// }
+						// https://conns.atlassian.net/browse/CIW-12617
+						if(applyDeliveryDateRuleCIW12617(dateAvailble)) {
+							deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
+									dateAvailble, lr.getOnhandFlag(), lr.getLocationType(), lr.getLocationNumber()));
+						}
+						
+//						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
+//								dateAvailble, lr.getOnhandFlag(), lr.getLocationType(), lr.getLocationNumber()));
 
 					}
 				}
@@ -202,6 +206,25 @@ public class ResponseBuilder {
 		}
 		tiwResponse.sort();
 		return tiwResponse;
+	}
+
+	// https://conns.atlassian.net/browse/CIW-12617
+	// We will have to ignore the delivery_atp if the zipcode is not available or
+	// the delivery date is in the past. Please make this change in ATP
+	private Boolean applyDeliveryDateRuleCIW12617(String ddDateStr) {
+		logger.debug("Delivery Date: {}", ddDateStr);
+		if (ddDateStr != null) {
+			LocalDate ddDate = LocalDate.parse(ddDateStr);
+			LocalDate today = LocalDate.now();
+			logger.debug("Delivery Date: {}", ddDate);
+			logger.debug("Today Date: {}", today);
+			int compareValue = ddDate.compareTo(today);
+			logger.debug("compareValue: {}", compareValue);
+			if (compareValue >= 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void debugList(String message, Collection coll) {

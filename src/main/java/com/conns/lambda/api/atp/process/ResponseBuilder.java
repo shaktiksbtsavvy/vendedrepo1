@@ -37,6 +37,7 @@ public class ResponseBuilder {
 	protected static final String _STR = "STR";
 	protected static final String _ONHANDFLAG_Y = "Y";
 	protected static final String _ONHANDFLAG_RY = "RY";
+	protected static final String _ONHANDFLAG_RF = "RF"; //sending ‘RF’ for PO?
 	private static final Logger logger = LogManager.getLogger(ResponseBuilder.class);
 
 	public ResponseBody buildErrorResponseObject(int code, String message, String errorDetails) {
@@ -193,7 +194,7 @@ public class ResponseBuilder {
 						// https://conns.atlassian.net/browse/CIW-12617
 						if(applyDeliveryDateRuleCIW12617(dateAvailble)) {
 							deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
-									dateAvailble, lr.getOnhandFlag(), lr.getLocationType(), lr.getLocationNumber()));
+									dateAvailble, changeRDC_RYtoY_EAI_91(lr.getOnhandFlag()), lr.getLocationType(), lr.getLocationNumber()));
 						}
 						
 //						deliveryAtp.add(new DeliveryATPResponse(skuName, request.getZip(), lr.getQtyAvailable(),
@@ -208,6 +209,14 @@ public class ResponseBuilder {
 		return tiwResponse;
 	}
 
+	
+	//https://conns.atlassian.net/browse/EAI-91
+	//onhand_flag as ‘RY’ for RDC and RF for PO, Front end team is asking if that can be sent as ‘Y’ itself,
+	private String changeRDC_RYtoY_EAI_91(String onHandFlag) {
+	    return onHandFlag == _ONHANDFLAG_RY || onHandFlag == _ONHANDFLAG_RF ? _ONHANDFLAG_Y : onHandFlag;
+	}
+	
+	
 	// https://conns.atlassian.net/browse/CIW-12617
 	// We will have to ignore the delivery_atp if the zipcode is not available or
 	// the delivery date is in the past. Please make this change in ATP

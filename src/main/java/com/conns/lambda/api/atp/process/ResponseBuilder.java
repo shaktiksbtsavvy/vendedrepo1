@@ -36,7 +36,7 @@ public class ResponseBuilder {
 	protected static final String _WH = "WH";
 	protected static final String _STR = "STR";
 	protected static final String _ONHANDFLAG_Y = "Y";
-	protected static final String _ONHANDFLAG_N = "Y";
+	protected static final String _ONHANDFLAG_N = "N";
 	protected static final String _ONHANDFLAG_RY = "RY";
 	protected static final String _ONHANDFLAG_RF = "RF"; //sending ‘RF’ for PO?
 	private static final Logger logger = LogManager.getLogger(ResponseBuilder.class);

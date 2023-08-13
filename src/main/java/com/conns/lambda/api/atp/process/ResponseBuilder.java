@@ -58,7 +58,7 @@ public class ResponseBuilder {
 	 * @return
 	 * @throws InvalidRequestException
 	 */
-	public ResponseBody buildResponseObject(AvailableToPromiseRequest request, InventoryAvailableResponse invRes,
+	public AvailableToPromiseResponse buildResponseObject(AvailableToPromiseRequest request, InventoryAvailableResponse invRes,
 			DeliveryDateResponse ddRes, LocationDTO locationDTO) {
 		return buildResponseObject(HTTP_200, SUCCESS, request, invRes, ddRes, locationDTO);
 	}
@@ -80,7 +80,7 @@ public class ResponseBuilder {
 	 * @param locationDTO
 	 * @return
 	 */
-	protected ResponseBody buildResponseObject(int code, String message, AvailableToPromiseRequest request,
+	protected AvailableToPromiseResponse buildResponseObject(int code, String message, AvailableToPromiseRequest request,
 			InventoryAvailableResponse invRes, DeliveryDateResponse ddRes, LocationDTO locationDTO) {
 
 		logger.debug("1-Starting build response.");

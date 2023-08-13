@@ -75,5 +75,11 @@ public class AvailableToPromiseResponse extends ResponseBody{
 	public void sort() {
 		Collections.sort(pickupAtp);
 	}
+
+	@Override
+	public String toString() {
+		return "AvailableToPromiseResponse [code=" + code + ", message=" + message + ", reqID=" + reqID
+				+ ", deliveryAtp=" + deliveryAtp + ", pickupAtp=" + pickupAtp + "]";
+	}
 	
 }

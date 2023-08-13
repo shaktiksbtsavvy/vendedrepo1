@@ -17,8 +17,10 @@ import com.conns.lambda.api.atp.model.Inventory.InventoryAvailableRequest;
 import com.conns.lambda.api.atp.model.Inventory.InventoryAvailableResponse;
 import com.conns.lambda.api.atp.model.dd.DeliveryDateRequest;
 import com.conns.lambda.api.atp.model.dd.DeliveryDateResponse;
+import com.conns.lambda.api.atp.process.ClearanceResponseBuilder;
 import com.conns.lambda.api.atp.process.ResponseBuilder;
 import com.conns.lambda.api.atp.request.AvailableToPromiseRequest;
+import com.conns.lambda.api.atp.response.AvailableToPromiseResponse;
 import com.conns.lambda.common.controller.RequestController;
 import com.conns.lambda.common.exception.ExceptionHandler;
 import com.conns.lambda.common.exception.InternalServiceException;
@@ -158,9 +160,15 @@ public class AvailableToPromiseController extends RequestController {
 
 		Performance p7 = new Performance("Total build response from retrived inventory.", logger);
 		p7.start();
-		ResponseBody response = responseBuilder.buildResponseObject(atpRequest, invRes, ddRes, locationDTO);
+		AvailableToPromiseResponse response = responseBuilder.buildResponseObject(atpRequest, invRes, ddRes, locationDTO);
 		p7.end();
 		logger.debug("After Calling responseBuilder.buildResponseObject:" + response);
+		
+		https://conns.atlassian.net/browse/CIW-16118
+		if(atpRequest.getClearanceStoreId() != null && atpRequest.getClearanceStoreId().length() > 0) {
+			ClearanceResponseBuilder clearanceResponseBuilder = new ClearanceResponseBuilder();
+			response = clearanceResponseBuilder.buildResponseObject(atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(), response);
+		}
 
 		return response;
 	}

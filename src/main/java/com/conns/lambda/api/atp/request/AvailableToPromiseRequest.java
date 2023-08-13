@@ -36,6 +36,12 @@ public class AvailableToPromiseRequest extends ResponseBody{
 	@JsonProperty("zip")
 	private String zip;
 	
+	@JsonProperty("clearance_store_id")
+	private String clearanceStoreId;
+	
+	@JsonProperty("clearance_store_nearest_wearhouse")
+	private String clearanceStoreWearhouse;
+	
 	@JsonProperty("locale")
 	private String locale;
 	
@@ -117,5 +123,21 @@ public class AvailableToPromiseRequest extends ResponseBody{
 
 	public void setUpcs(List<String> upcs) {
 		this.upcs = upcs;
+	}
+
+	public String getClearanceStoreId() {
+		return clearanceStoreId;
+	}
+
+	public void setClearanceStoreId(String clearanceStoreId) {
+		this.clearanceStoreId = clearanceStoreId;
+	}
+
+	public String getClearanceStoreWearhouse() {
+		return clearanceStoreWearhouse;
+	}
+
+	public void setClearanceStoreWearhouse(String clearanceStoreWearhouse) {
+		this.clearanceStoreWearhouse = clearanceStoreWearhouse;
 	}
 }

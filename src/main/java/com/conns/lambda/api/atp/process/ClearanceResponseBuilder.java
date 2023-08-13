@@ -64,14 +64,11 @@ public class ClearanceResponseBuilder {
 	 * @return
 	 * @throws InvalidRequestException
 	 */
-	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse) {
+	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO) {
 		
 		List<PickupATPResponse> pickupAtpClearanceList = new ArrayList<PickupATPResponse>();
 		
-		String closestWarehouse= null;
-		if(atpResponse.getDeliveryAtp() != null && atpResponse.getDeliveryAtp().size() > 0 && atpResponse.getDeliveryAtp().get(0) != null) {
-			closestWarehouse = atpResponse.getDeliveryAtp().get(0).getInventoryLocation();
-		}
+		String closestWarehouse = locationDTO.getDLLocation();
 		
 		if(closestWarehouse != null && closestWarehouse.equalsIgnoreCase(clearanceStoreWearhouse)) {
 			for( PickupATPResponse pickupAtp:  atpResponse.getPickupAtp()) {

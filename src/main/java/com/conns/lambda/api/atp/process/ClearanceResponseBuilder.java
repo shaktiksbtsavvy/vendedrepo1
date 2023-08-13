@@ -66,14 +66,14 @@ public class ClearanceResponseBuilder {
 	 */
 	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO) {
 		
-		List<PickupATPResponse> pickupAtpClearanceList = new ArrayList<PickupATPResponse>();
+		List<PickupATPResponse> pickupAtpClearanceRawList = new ArrayList<PickupATPResponse>();
 		
 		String closestWarehouse = locationDTO.getDLLocation();
 		
 		if(closestWarehouse != null && closestWarehouse.equalsIgnoreCase(clearanceStoreWearhouse)) {
 			for( PickupATPResponse pickupAtp:  atpResponse.getPickupAtp()) {
 				if(pickupAtp.getLocation().equalsIgnoreCase(clearanceStoreId)) {
-					pickupAtpClearanceList.add(pickupAtp);
+					pickupAtpClearanceRawList.add(pickupAtp);
 				}
 			}
 		} else {
@@ -82,10 +82,14 @@ public class ClearanceResponseBuilder {
 		
 		AvailableToPromiseResponse atpClearance = new AvailableToPromiseResponse();
 	
-		
+		List<PickupATPResponse> pickupAtpClearanceList = new ArrayList<PickupATPResponse>();
 		List<DeliveryATPResponse> deliveryAtpClearanceList = new ArrayList<DeliveryATPResponse>();
+		atpClearance.setDeliveryAtp(deliveryAtpClearanceList);
+		atpClearance.setPickupAtp(pickupAtpClearanceList);
 		
-		for(PickupATPResponse pickupClearance: pickupAtpClearanceList) {
+		for(PickupATPResponse pickupClearance: pickupAtpClearanceRawList) {
+			
+			pickupAtpClearanceList.add(pickupClearance);
 			
 			DeliveryATPResponse delClearance = new DeliveryATPResponse();
 			delClearance.setSku(pickupClearance.getSku());
@@ -100,8 +104,7 @@ public class ClearanceResponseBuilder {
 			
 		}
 		
-		atpClearance.setDeliveryAtp(deliveryAtpClearanceList);
-		atpClearance.setPickupAtp(pickupAtpClearanceList);
+
 		
 		return atpClearance;
 	}

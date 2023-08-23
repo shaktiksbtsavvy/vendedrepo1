@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -31,6 +32,9 @@ public class NextDeliveryDateResponse {
 	
 	@JsonInclude(Include.NON_NULL)
 	private String rdc_nextDeliveryDate;
+	
+	@JsonProperty("clr_delivery_date")
+	private String clr_delivery_date;
 	
 	private List<PurchaseOrder> purchaseOrder;
 	
@@ -67,6 +71,12 @@ public class NextDeliveryDateResponse {
 	public String toString() {
 		return "NextDeliveryDateResponse [nextDeliveryDate=" + nextDeliveryDate + ", purchaseOrder=" + purchaseOrder
 				+ "]";
+	}
+	public String getClr_delivery_date() {
+		return clr_delivery_date;
+	}
+	public void setClr_delivery_date(String clr_delivery_date) {
+		this.clr_delivery_date = clr_delivery_date;
 	}
 	
 	

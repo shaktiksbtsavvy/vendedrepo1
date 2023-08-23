@@ -64,9 +64,11 @@ public class ClearanceResponseBuilder {
 	 * @return
 	 * @throws InvalidRequestException
 	 */
-	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO) {
+	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO, DeliveryDateResponse ddRes) {
 		
 		List<PickupATPResponse> pickupAtpClearanceRawList = new ArrayList<PickupATPResponse>();
+		NextDeliveryDateResponse nddr = ddRes.getData() != null && ddRes.getData().size() > 0 ? ddRes.getData().get(0)
+				: null;
 		
 		String closestWarehouse = locationDTO.getDLLocation();
 		
@@ -81,7 +83,6 @@ public class ClearanceResponseBuilder {
 		}
 		
 		AvailableToPromiseResponse atpClearance = new AvailableToPromiseResponse();
-	
 		List<PickupATPResponse> pickupAtpClearanceList = new ArrayList<PickupATPResponse>();
 		List<DeliveryATPResponse> deliveryAtpClearanceList = new ArrayList<DeliveryATPResponse>();
 		atpClearance.setDeliveryAtp(deliveryAtpClearanceList);
@@ -98,7 +99,7 @@ public class ClearanceResponseBuilder {
 			delClearance.setInventoryLocationType("WH");
 			delClearance.setAvailableQty(pickupClearance.getAvailableQty());
 			delClearance.setOnhandFlag(pickupClearance.getAvailableQty() > 0 ? "Y": "N");
-			delClearance.setAtpDetails(new ATPDetailsResponse(pickupClearance.getAvailableQty() > 0 ? getClearanceInCST(): null, null,  null));
+			delClearance.setAtpDetails(new ATPDetailsResponse(pickupClearance.getAvailableQty() > 0 ? nddr != null ? nddr.getClr_delivery_date() : null: null, null,  null));
 			
 			deliveryAtpClearanceList.add(delClearance);
 			

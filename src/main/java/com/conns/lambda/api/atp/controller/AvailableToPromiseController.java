@@ -167,7 +167,9 @@ public class AvailableToPromiseController extends RequestController {
 		https://conns.atlassian.net/browse/CIW-16118
 		if(atpRequest.getClearanceStoreId() != null && atpRequest.getClearanceStoreId().length() > 0) {
 			ClearanceResponseBuilder clearanceResponseBuilder = new ClearanceResponseBuilder();
-			response = clearanceResponseBuilder.buildResponseObject(atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(), response, locationDTO, ddRes);
+			//int code, String message, AvailableToPromiseRequest request,InventoryAvailableResponse invRes,String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO, DeliveryDateResponse ddRes
+			response = clearanceResponseBuilder.buildResponseObject(invRes.getCode() ,invRes.getMessage(),atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(),response, locationDTO, ddRes);
+		
 		}
 
 		return response;

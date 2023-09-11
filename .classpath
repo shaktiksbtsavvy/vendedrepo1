@@ -64,6 +64,5 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="/lambda-inv-availabletopromisev2_api"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

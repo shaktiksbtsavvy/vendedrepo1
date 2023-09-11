@@ -64,7 +64,14 @@ public class ClearanceResponseBuilder {
 	 * @return
 	 * @throws InvalidRequestException
 	 */
-	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO, DeliveryDateResponse ddRes) {
+	
+	
+	public AvailableToPromiseResponse buildResponseObject(AvailableToPromiseRequest request,AvailableToPromiseResponse atpResponse,InventoryAvailableResponse invRes ,
+			DeliveryDateResponse ddRes, LocationDTO locationDTO) {
+		return buildResponseObject(request,atpResponse,invRes, ddRes, locationDTO);
+	}
+	
+	public AvailableToPromiseResponse buildResponseObject(int code, String message, AvailableToPromiseRequest request,InventoryAvailableResponse invRes,String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO, DeliveryDateResponse ddRes) {
 		
 		List<PickupATPResponse> pickupAtpClearanceRawList = new ArrayList<PickupATPResponse>();
 		NextDeliveryDateResponse nddr = ddRes.getData() != null && ddRes.getData().size() > 0 ? ddRes.getData().get(0)

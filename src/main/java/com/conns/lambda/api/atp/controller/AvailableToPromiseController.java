@@ -168,8 +168,7 @@ public class AvailableToPromiseController extends RequestController {
 		if(atpRequest.getClearanceStoreId() != null && atpRequest.getClearanceStoreId().length() > 0) {
 			ClearanceResponseBuilder clearanceResponseBuilder = new ClearanceResponseBuilder();
 			//int code, String message, AvailableToPromiseRequest request,InventoryAvailableResponse invRes,String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO, DeliveryDateResponse ddRes
-			response = clearanceResponseBuilder.buildResponseObject(invRes.getCode() ,invRes.getMessage(),atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(),response, locationDTO, ddRes);
-		
+			response = clearanceResponseBuilder.buildResponseObject(atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(), response, ddRes,locationDTO );
 		}
 
 		return response;

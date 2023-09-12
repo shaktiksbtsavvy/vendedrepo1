@@ -57,6 +57,8 @@ public class ClearanceResponseBuilder {
 
 	/**
 	 * Build Response Object
+	 * @param message 
+	 * @param code 
 	 * 
 	 * @param code
 	 * @param message
@@ -64,14 +66,14 @@ public class ClearanceResponseBuilder {
 	 * @return
 	 * @throws InvalidRequestException
 	 */
+	//atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(), response, locationDTO, ddRes
 	
-	
-	public AvailableToPromiseResponse buildResponseObject(AvailableToPromiseResponse atpResponse,InventoryAvailableResponse invRes ,
+	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId,String clearanceStoreWearhouse,AvailableToPromiseResponse atpResponse ,
 			DeliveryDateResponse ddRes, LocationDTO locationDTO) {
-		return buildResponseObject(atpResponse,invRes, ddRes, locationDTO);
+		return buildResponseObject(HTTP_200, SUCCESS,clearanceStoreId,clearanceStoreWearhouse,atpResponse,ddRes,locationDTO);
 	}
 	
-	public AvailableToPromiseResponse buildResponseObject(int code, String message,String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO, DeliveryDateResponse ddRes) {
+	public AvailableToPromiseResponse buildResponseObject(int code, String message,String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse,DeliveryDateResponse ddRes, LocationDTO locationDTO) {
 		
 		List<PickupATPResponse> pickupAtpClearanceRawList = new ArrayList<PickupATPResponse>();
 		NextDeliveryDateResponse nddr = ddRes.getData() != null && ddRes.getData().size() > 0 ? ddRes.getData().get(0)

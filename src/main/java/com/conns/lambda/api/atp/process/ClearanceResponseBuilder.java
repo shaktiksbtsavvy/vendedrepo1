@@ -94,6 +94,8 @@ public class ClearanceResponseBuilder {
 		AvailableToPromiseResponse atpClearance = new AvailableToPromiseResponse();
 		List<PickupATPResponse> pickupAtpClearanceList = new ArrayList<PickupATPResponse>();
 		List<DeliveryATPResponse> deliveryAtpClearanceList = new ArrayList<DeliveryATPResponse>();
+		atpClearance.setCode(code);
+		atpClearance.setMessage(message);
 		atpClearance.setDeliveryAtp(deliveryAtpClearanceList);
 		atpClearance.setPickupAtp(pickupAtpClearanceList);
 		

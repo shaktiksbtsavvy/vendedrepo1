@@ -162,23 +162,23 @@ public class AvailableToPromiseController extends RequestController {
 		p7.start();
 		AvailableToPromiseResponse response= null;
 		
+//		https://conns.atlassian.net/browse/CIW-16118
 		if(atpRequest.getClearanceStoreId() != null && atpRequest.getClearanceStoreId().length() > 0) {
 			ClearanceResponseBuilder clearanceResponseBuilder = new ClearanceResponseBuilder();
 			//int code, String message, AvailableToPromiseRequest request,InventoryAvailableResponse invRes,String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse, LocationDTO locationDTO, DeliveryDateResponse ddRes
-			response = clearanceResponseBuilder.buildResponseObject(atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(), response, ddRes,locationDTO );
+			response = clearanceResponseBuilder.buildResponseObject(atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(), ddRes,locationDTO );
 			logger.debug("After Calling clearanceResponseBuilder.buildResponseObject:" + response);
 		}else {
-		 response = responseBuilder.buildResponseObject(atpRequest, invRes, ddRes, locationDTO);
-		}
+		
+	 response = responseBuilder.buildResponseObject(atpRequest, invRes, ddRes, locationDTO);
 		p7.end();
 		logger.debug("After Calling responseBuilder.buildResponseObject:" + response);
+		}
 		
-//		https://conns.atlassian.net/browse/CIW-16118
-		
+
 		
 
 		return response;
-		
 	}
 
 	private void throwInvalidRequestException(String message) throws InvalidRequestWarning {

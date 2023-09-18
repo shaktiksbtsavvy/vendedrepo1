@@ -67,10 +67,10 @@ public class ClearanceResponseBuilder {
 	 * @throws InvalidRequestException
 	 */
 	//atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(), response, locationDTO, ddRes
-	
-	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId,String clearanceStoreWearhouse,AvailableToPromiseResponse atpResponse ,
+	AvailableToPromiseResponse response;
+	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId,String clearanceStoreWearhouse,
 			DeliveryDateResponse ddRes, LocationDTO locationDTO) {
-		return buildResponseObject(HTTP_200, SUCCESS,clearanceStoreId,clearanceStoreWearhouse,atpResponse,ddRes,locationDTO);
+		return buildResponseObject(HTTP_200, SUCCESS,clearanceStoreId,clearanceStoreWearhouse,response,ddRes,locationDTO);
 	}
 	
 	public AvailableToPromiseResponse buildResponseObject(int code, String message,String clearanceStoreId, String clearanceStoreWearhouse, AvailableToPromiseResponse atpResponse,DeliveryDateResponse ddRes, LocationDTO locationDTO) {

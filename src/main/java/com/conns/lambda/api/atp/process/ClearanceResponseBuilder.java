@@ -67,8 +67,8 @@ public class ClearanceResponseBuilder {
 	 * @throws InvalidRequestException
 	 */
 	//atpRequest.getClearanceStoreId(), atpRequest.getClearanceStoreWearhouse(), response, locationDTO, ddRes
-	AvailableToPromiseResponse response;
-	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId,String clearanceStoreWearhouse,
+	
+	public AvailableToPromiseResponse buildResponseObject(String clearanceStoreId,String clearanceStoreWearhouse,AvailableToPromiseResponse response,
 			DeliveryDateResponse ddRes, LocationDTO locationDTO) {
 		return buildResponseObject(HTTP_200, SUCCESS,clearanceStoreId,clearanceStoreWearhouse,response,ddRes,locationDTO);
 	}

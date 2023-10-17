@@ -89,7 +89,7 @@ public class AvailableToPromiseController extends RequestController {
 
 		Performance p1 = new Performance("Request Parsing", logger);
 		p1.start();
-		if (!requestBody.isEmpty()) {
+		if (requestBody != null && !requestBody.isEmpty()) {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
 			try {

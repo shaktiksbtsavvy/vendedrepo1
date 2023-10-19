@@ -134,19 +134,27 @@ public class ClearanceResponseBuilder {
 
 	public AvailableToPromiseResponse filterOutClearanceStores(
 			AvailableToPromiseResponse atpResponse) {
+		
+		AvailableToPromiseResponse atpResponseFilter = new AvailableToPromiseResponse();
+		List<PickupATPResponse> pickupAtpList = new ArrayList<PickupATPResponse>();
+		List<DeliveryATPResponse> deliveryAtpList = new ArrayList<DeliveryATPResponse>();
+		atpResponseFilter.setCode(atpResponse.getCode());
+		atpResponseFilter.setMessage(atpResponse.getMessage());
+		atpResponseFilter.setDeliveryAtp(deliveryAtpList);
+		atpResponseFilter.setPickupAtp(pickupAtpList);
+		
+		
 		for (PickupATPResponse pickupAtp : atpResponse.getPickupAtp()) {
-			//if (pickupAtp.getLocation().equalsIgnoreCase("290") || pickupAtp.getLocation().equalsIgnoreCase("266")) {
-			if (clearanceStoreList.contains(pickupAtp.getLocation())) {
-				atpResponse.getPickupAtp().remove(pickupAtp);
+			if (!clearanceStoreList.contains(pickupAtp.getLocation())) {
+				pickupAtpList.add(pickupAtp);
 			}
 		}
 		for (DeliveryATPResponse delAtp : atpResponse.getDeliveryAtp()) {
-			//if (delAtp.getInventoryLocation().equalsIgnoreCase("290") || delAtp.getInventoryLocation().equalsIgnoreCase("266")) {
-			if (clearanceStoreList.contains(delAtp.getInventoryLocation())) {
-				atpResponse.getDeliveryAtp().remove(delAtp);
+			if (!clearanceStoreList.contains(delAtp.getInventoryLocation())) {
+				deliveryAtpList.add(delAtp);
 			}
 		}
-		return atpResponse;
+		return atpResponseFilter;
 	}
 
 	private String getClearanceInCST() {

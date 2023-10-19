@@ -149,11 +149,13 @@ public class ClearanceResponseBuilder {
 				pickupAtpList.add(pickupAtp);
 			}
 		}
+		
 		for (DeliveryATPResponse delAtp : atpResponse.getDeliveryAtp()) {
 			if (!clearanceStoreList.contains(delAtp.getInventoryLocation())) {
 				deliveryAtpList.add(delAtp);
 			}
 		}
+		
 		return atpResponseFilter;
 	}
 

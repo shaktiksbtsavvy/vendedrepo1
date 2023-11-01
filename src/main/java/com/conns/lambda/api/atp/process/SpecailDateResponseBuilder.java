@@ -82,6 +82,7 @@ public class SpecailDateResponseBuilder {
 			if(startDate != null &&  endTime != null &&  numberDays > 0) {
 				if(currentDate.after(startDate) && currentDate.before(endTime) ) {
 					currentDate = addDays(currentDate, numberDays);
+					logger.info("Pickup date adjusted for: {} by days:{}", dateConfig.getName(), dateConfig.getPickupDaysOffset());
 				}
 			}
 		}

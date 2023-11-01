@@ -50,7 +50,7 @@ public class ResponseBuilder {
 	private static final String _ADJUSTEDSTART = System.getenv("ADJUSTEDSTART") != null ? System.getenv("ADJUSTEDSTART").trim() : null; // INVTABLENAME
 	private static final String _ADJUSTEDEND = System.getenv("ADJUSTEDEND") != null ? System.getenv("ADJUSTEDEND").trim() : null; // INVTABLENAME
 	private static final String _ADJUSTEDDAYS = System.getenv("ADJUSTEDDAYS") != null ? System.getenv("ADJUSTEDDAYS").trim() : "0"; // INVTABLENAME
-	private static final Long _ADJUSTEDDAYSLONG = Long.parseLong(_ADJUSTEDDAYS);
+	private static final Integer _ADJUSTEDDAYSLONG = Integer.parseInt(_ADJUSTEDDAYS);
 	
 	public ResponseBody buildErrorResponseObject(int code, String message, String errorDetails) {
 		return new ResponseErrorBody(code, message, errorDetails);
@@ -294,8 +294,8 @@ public class ResponseBuilder {
 	
 	//added for https://conns.atlassian.net/browse/CIW-16812
 	private String getDateInCST() {
-		LocalDateTime startDate = null;
-		LocalDateTime endTime = null;
+		Date startDate = null;
+		Date endTime = null;
 		if(_ADJUSTEDSTART != null && _ADJUSTEDEND != null ) {
 			try {
 				startDate = parse(_ADJUSTEDSTART);
@@ -305,34 +305,37 @@ public class ResponseBuilder {
 				e.printStackTrace();
 			}
 		}
-		Long numberDays = _ADJUSTEDDAYSLONG;
-		LocalDateTime currentDate = LocalDateTime.now();
+		Integer numberDays = _ADJUSTEDDAYSLONG;
+		Date currentDate = new Date();
 		if(startDate != null &&  endTime != null &&  numberDays > 0) {
-			if(currentDate.isAfter(startDate) && currentDate.isBefore(endTime) ) {
-				currentDate = currentDate.plusDays(numberDays);
+			if(currentDate.after(startDate) && currentDate.before(endTime) ) {
+				currentDate = addDays(currentDate, numberDays);
 			}
 		}
 		//Calendar currentdate = Calendar.getInstance();
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		TimeZone obj = TimeZone.getTimeZone("CST");
 		formatter.setTimeZone(obj);
-
 		String today = formatter.format(currentDate);
 		return today;
 	}
 	
-	private LocalDateTime parse(String strDate) throws ParseException {
+	private Date parse(String strDate) throws ParseException {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M-dd-yyyy hh:mm a z");
 		ZonedDateTime zonedDateTime = ZonedDateTime.parse(strDate, formatter);
 		//return LocalDateTime.from(zonedDateTime.toInstant());
-		Date d = Date.from(zonedDateTime.toInstant());
-		return convertToLocalDateViaInstant(d);
+		return Date.from(zonedDateTime.toInstant());
 	}
 	
-	public LocalDateTime convertToLocalDateViaInstant(Date dateToConvert) {
-	    return dateToConvert.toInstant()
-	      .atZone(ZoneId.systemDefault())
-	      .toLocalDateTime();
-	}
+	
+	private Date addDays(Date currentDate, Integer days){
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(currentDate);
+        c.add(Calendar.DATE, days); 
+        Date currentDatePlusOne = c.getTime();
+        return currentDatePlusOne;
+    }
+
 
 }

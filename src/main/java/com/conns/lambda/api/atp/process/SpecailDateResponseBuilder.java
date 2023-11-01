@@ -78,7 +78,7 @@ public class SpecailDateResponseBuilder {
 		for(DateConfig dateConfig: dateConfigs) {
 			Date startDate = parse(dateConfig.getStartDate());
 			Date endTime = parse(dateConfig.getEndDate());
-			Integer numberDays = dateConfig.getPikupDaysOffset();
+			Integer numberDays = dateConfig.getPickupDaysOffset();
 			if(startDate != null &&  endTime != null &&  numberDays > 0) {
 				if(currentDate.after(startDate) && currentDate.before(endTime) ) {
 					currentDate = addDays(currentDate, numberDays);

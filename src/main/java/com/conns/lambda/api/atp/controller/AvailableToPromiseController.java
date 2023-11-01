@@ -19,6 +19,7 @@ import com.conns.lambda.api.atp.model.dd.DeliveryDateRequest;
 import com.conns.lambda.api.atp.model.dd.DeliveryDateResponse;
 import com.conns.lambda.api.atp.process.ClearanceResponseBuilder;
 import com.conns.lambda.api.atp.process.ResponseBuilder;
+import com.conns.lambda.api.atp.process.SpecailDateResponseBuilder;
 import com.conns.lambda.api.atp.request.AvailableToPromiseRequest;
 import com.conns.lambda.api.atp.response.AvailableToPromiseResponse;
 import com.conns.lambda.common.controller.RequestController;
@@ -163,6 +164,10 @@ public class AvailableToPromiseController extends RequestController {
 		AvailableToPromiseResponse response = responseBuilder.buildResponseObject(atpRequest, invRes, ddRes, locationDTO);
 		p7.end();
 		logger.debug("After Calling responseBuilder.buildResponseObject:" + response);
+		
+		//https://conns.atlassian.net/browse/CIW-16812
+		SpecailDateResponseBuilder specialDate = new SpecailDateResponseBuilder();
+		response = specialDate.buildResponseObject(response);
 		
 //		https://conns.atlassian.net/browse/CIW-16118
 		if(atpRequest.getClearanceStoreId() != null && atpRequest.getClearanceStoreId().length() > 0) {

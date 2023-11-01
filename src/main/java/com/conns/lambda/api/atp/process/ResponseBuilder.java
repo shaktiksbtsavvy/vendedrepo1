@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -323,8 +324,15 @@ public class ResponseBuilder {
 	private LocalDateTime parse(String strDate) throws ParseException {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M-dd-yyyy hh:mm a z");
 		ZonedDateTime zonedDateTime = ZonedDateTime.parse(strDate, formatter);
-		return LocalDateTime.from(zonedDateTime.toInstant());
-		//return Date.from(zonedDateTime.toInstant());
+		//return LocalDateTime.from(zonedDateTime.toInstant());
+		Date d = Date.from(zonedDateTime.toInstant());
+		return convertToLocalDateViaInstant(d);
+	}
+	
+	public LocalDateTime convertToLocalDateViaInstant(Date dateToConvert) {
+	    return dateToConvert.toInstant()
+	      .atZone(ZoneId.systemDefault())
+	      .toLocalDateTime();
 	}
 
 }

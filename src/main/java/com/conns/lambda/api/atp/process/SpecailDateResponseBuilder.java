@@ -113,8 +113,8 @@ public class SpecailDateResponseBuilder {
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class DateConfig {
 		
-		@JsonProperty("pikup_days_offset")
-	    public Integer pikupDaysOffset;
+		@JsonProperty("pickup_days_offset")
+	    public Integer pickupDaysOffset;
 		
 		@JsonProperty("name")
 	    public String name;
@@ -125,12 +125,12 @@ public class SpecailDateResponseBuilder {
 		@JsonProperty("end_date")
 	    public String endDate;
 
-		public Integer getPikupDaysOffset() {
-			return pikupDaysOffset;
+		public Integer getPickupDaysOffset() {
+			return pickupDaysOffset;
 		}
 
-		public void setPikupDaysOffset(Integer pikupDaysOffset) {
-			this.pikupDaysOffset = pikupDaysOffset;
+		public void setPickupDaysOffset(Integer pikupDaysOffset) {
+			this.pickupDaysOffset = pikupDaysOffset;
 		}
 
 		public String getName() {

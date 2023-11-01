@@ -123,6 +123,9 @@ Resources:
           LOG_LEVEL: DEBUG
           DISTANCETHRESHOLD: 75
           CLEARANCESTORES: 290,266
+          ADJUSTEDSTART: 01-17-2022 02:14 PM America/Chicago
+          ADJUSTEDEND: 01-17-2022 02:14 PM America/Chicago
+          ADJUSTEDDAYS: 0 
           INVENTORYFUN: !FindInMap
             - EnvMap
             - !Ref StageName

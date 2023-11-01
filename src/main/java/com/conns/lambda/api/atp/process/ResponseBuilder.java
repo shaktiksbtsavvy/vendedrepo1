@@ -1,11 +1,16 @@
 package com.conns.lambda.api.atp.process;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -40,7 +45,12 @@ public class ResponseBuilder {
 	protected static final String _ONHANDFLAG_RY = "RY";
 	protected static final String _ONHANDFLAG_RF = "RF"; //sending ‘RF’ for PO?
 	private static final Logger logger = LogManager.getLogger(ResponseBuilder.class);
-
+	
+	private static final String _ADJUSTEDSTART = System.getenv("ADJUSTEDSTART") != null ? System.getenv("ADJUSTEDSTART").trim() : null; // INVTABLENAME
+	private static final String _ADJUSTEDEND = System.getenv("ADJUSTEDEND") != null ? System.getenv("ADJUSTEDEND").trim() : null; // INVTABLENAME
+	private static final String _ADJUSTEDDAYS = System.getenv("ADJUSTEDDAYS") != null ? System.getenv("ADJUSTEDDAYS").trim() : "0"; // INVTABLENAME
+	private static final Long _ADJUSTEDDAYSLONG = Long.parseLong(_ADJUSTEDDAYS);
+	
 	public ResponseBody buildErrorResponseObject(int code, String message, String errorDetails) {
 		return new ResponseErrorBody(code, message, errorDetails);
 	}
@@ -159,7 +169,7 @@ public class ResponseBuilder {
 							pickupAtp.add(new PickupATPResponse(skuName, loc.getStoreResponse().getStoreUrl(),
 									lr.getLocationType(), loc.getStoreResponse().getStoreName(), loc.getLongitude(),
 									loc.getLatitude(), loc.getStoreResponse().getStorePhone(), lr.getLocationNumber(),
-									loc.getDistance(), getTodayInCST(), qtyStr, loc.getStoreResponse().getStoreZip(),
+									loc.getDistance(), getDateInCST(), qtyStr, loc.getStoreResponse().getStoreZip(),
 									loc.getStoreResponse().getStoreState(), loc.getStoreResponse().getStoreAddressln2(),
 									loc.getStoreResponse().getStoreAddressln1(), loc.getStoreResponse().getStoreCity(),
 									loc.getStoreResponse().getStoreClosingTime(),
@@ -279,6 +289,42 @@ public class ResponseBuilder {
 
 		String today = formatter.format(currentdate.getTime());
 		return today;
+	}
+	
+	//added for https://conns.atlassian.net/browse/CIW-16812
+	private String getDateInCST() {
+		LocalDateTime startDate = null;
+		LocalDateTime endTime = null;
+		if(_ADJUSTEDSTART != null && _ADJUSTEDEND != null ) {
+			try {
+				startDate = parse(_ADJUSTEDSTART);
+				endTime = parse(_ADJUSTEDEND);
+			} catch (ParseException e) {
+				logger.error("Setup The Pickup Date For Holidays Failed!!!! for " + _ADJUSTEDSTART +" "+ _ADJUSTEDEND);
+				e.printStackTrace();
+			}
+		}
+		Long numberDays = _ADJUSTEDDAYSLONG;
+		LocalDateTime currentDate = LocalDateTime.now();
+		if(startDate != null &&  endTime != null &&  numberDays > 0) {
+			if(currentDate.isAfter(startDate) && currentDate.isBefore(endTime) ) {
+				currentDate = currentDate.plusDays(numberDays);
+			}
+		}
+		//Calendar currentdate = Calendar.getInstance();
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		TimeZone obj = TimeZone.getTimeZone("CST");
+		formatter.setTimeZone(obj);
+
+		String today = formatter.format(currentDate);
+		return today;
+	}
+	
+	private LocalDateTime parse(String strDate) throws ParseException {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M-dd-yyyy hh:mm a z");
+		ZonedDateTime zonedDateTime = ZonedDateTime.parse(strDate, formatter);
+		return LocalDateTime.from(zonedDateTime.toInstant());
+		//return Date.from(zonedDateTime.toInstant());
 	}
 
 }

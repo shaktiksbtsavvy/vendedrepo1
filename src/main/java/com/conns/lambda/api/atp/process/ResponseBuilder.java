@@ -294,25 +294,27 @@ public class ResponseBuilder {
 	
 	//added for https://conns.atlassian.net/browse/CIW-16812
 	private String getDateInCST() {
+		Date currentDate = new Date();
+		
 		Date startDate = null;
 		Date endTime = null;
 		if(_ADJUSTEDSTART != null && _ADJUSTEDEND != null ) {
 			try {
 				startDate = parse(_ADJUSTEDSTART);
 				endTime = parse(_ADJUSTEDEND);
-			} catch (ParseException e) {
+			} catch (Exception e) {
 				logger.error("Setup The Pickup Date For Holidays Failed!!!! for " + _ADJUSTEDSTART +" "+ _ADJUSTEDEND);
 				e.printStackTrace();
 			}
 		}
 		Integer numberDays = _ADJUSTEDDAYSLONG;
-		Date currentDate = new Date();
 		if(startDate != null &&  endTime != null &&  numberDays > 0) {
 			if(currentDate.after(startDate) && currentDate.before(endTime) ) {
 				currentDate = addDays(currentDate, numberDays);
 			}
 		}
-		//Calendar currentdate = Calendar.getInstance();
+		
+		
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		TimeZone obj = TimeZone.getTimeZone("CST");
 		formatter.setTimeZone(obj);

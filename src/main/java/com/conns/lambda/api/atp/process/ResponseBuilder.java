@@ -294,13 +294,11 @@ public class ResponseBuilder {
 	
 	//added for https://conns.atlassian.net/browse/CIW-16812
 	private String getDateInCST() {
-		logger.debug("Inside getDateInCST::");
 		Date currentDate = new Date();
 		
 		Date startDate = null;
 		Date endTime = null;
 		if(_ADJUSTEDSTART != null && _ADJUSTEDEND != null ) {
-			logger.debug("getDateInCST:: start and end date from env");
 			try {
 				startDate = parse(_ADJUSTEDSTART);
 				endTime = parse(_ADJUSTEDEND);
@@ -311,12 +309,7 @@ public class ResponseBuilder {
 		}
 		Integer numberDays = _ADJUSTEDDAYSLONG;
 		if(startDate != null &&  endTime != null &&  numberDays > 0) {
-			logger.debug("getDateInCST:: setting current PU date");
-			logger.debug("Current date: "+currentDate);
-			logger.debug("Start date: "+startDate);
-			logger.debug("End date: "+endTime);
 			if(currentDate.after(startDate) && currentDate.before(endTime) ) {
-				logger.debug("getDateInCST:: setting current PU date 2");
 				currentDate = addDays(currentDate, numberDays);
 			}
 		}
@@ -326,7 +319,6 @@ public class ResponseBuilder {
 		TimeZone obj = TimeZone.getTimeZone("CST");
 		formatter.setTimeZone(obj);
 		String today = formatter.format(currentDate);
-		logger.debug("getDateInCST:: returning current PU date: "+today);
 		return today;
 	}
 	

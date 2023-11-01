@@ -127,7 +127,7 @@ Resources:
           SPECIALDATECONFIG: '[{
     "name":"thanks giving",
     "start_date":"11-01-2023 11:00 AM America/Chicago",
-    "end_date":"11-01-2023 12:00 AM America/Chicago",
+    "end_date":"11-01-2023 01:00 PM America/Chicago",
     "pikup_days_offset":1
 }]'
           INVENTORYFUN: !FindInMap

@@ -312,6 +312,9 @@ public class ResponseBuilder {
 		Integer numberDays = _ADJUSTEDDAYSLONG;
 		if(startDate != null &&  endTime != null &&  numberDays > 0) {
 			logger.debug("getDateInCST:: setting current PU date");
+			logger.debug("Current date: "+currentDate);
+			logger.debug("Start date: "+startDate);
+			logger.debug("End date: "+endTime);
 			if(currentDate.after(startDate) && currentDate.before(endTime) ) {
 				logger.debug("getDateInCST:: setting current PU date 2");
 				currentDate = addDays(currentDate, numberDays);

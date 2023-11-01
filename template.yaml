@@ -123,7 +123,7 @@ Resources:
           LOG_LEVEL: DEBUG
           DISTANCETHRESHOLD: 75
           CLEARANCESTORES: 290,266
-          ADJUSTEDSTART: 10=31-2023 11:14 PM America/Chicago
+          ADJUSTEDSTART: 10-31-2023 11:14 PM America/Chicago
           ADJUSTEDEND: 11-01-2023 02:14 PM America/Chicago
           ADJUSTEDDAYS: 5 
           INVENTORYFUN: !FindInMap

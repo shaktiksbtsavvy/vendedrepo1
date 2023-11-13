@@ -151,7 +151,7 @@ Resources:
     {
         "name": "Thanksgiving",
         "start_date": "11-22-2023 06:00 PM America/Chicago",
-        "end_date": "11-24-2023 12:01 AM America/Chicago",
+        "end_date": "11-23-2023 06:01 PM America/Chicago",
         "pickup_days_offset": 1
     },
     {

@@ -33,6 +33,7 @@ Mappings:
       INVENTORYFUN: InventoryApi-SBX
       DDFUN: DeliveryDateApi-SBX
       GEOLOCATIONFUN: GeoLocationApi-SBX
+      GEOLOCATIONFUNTWO: GeoLocationV2Api-SBX
     Dev: 
       DAXENDPOINT: daxs://dax-api-cluster-dev.1stt4v.dax-clusters.us-east-2.amazonaws.com
       POLICYDAXRESOURCE: "arn:aws:dax:us-east-2:476435662168:cache/dax-api-cluster-dev"
@@ -44,6 +45,7 @@ Mappings:
       INVENTORYFUN: InventoryApi-Dev
       DDFUN: DeliveryDateApi-Dev
       GEOLOCATIONFUN: GeoLocationApi-Dev
+      GEOLOCATIONFUNTWO: GeoLocationV2Api-Dev
     UAT: 
       DAXENDPOINT: daxs://dax-api-cluster-uat.4o0d6x.dax-clusters.us-east-2.amazonaws.com #daxs://inventorytestcluster.yprieo.dax-clusters.us-west-1.amazonaws.com  
       POLICYDAXRESOURCE: "arn:aws:dax:us-east-2:545738172159:cache/dax-api-cluster-uat"
@@ -55,6 +57,7 @@ Mappings:
       INVENTORYFUN: InventoryApi-UAT
       DDFUN: DeliveryDateApi-UAT
       GEOLOCATIONFUN: GeoLocationApi-UAT
+      GEOLOCATIONFUNTWO: GeoLocationV2Api-UAT
     Prod: 
       DAXENDPOINT: daxs://dax-api-cluster-prod.0ll8yb.dax-clusters.us-east-2.amazonaws.com #daxs://inventorytestcluster.yprieo.dax-clusters.us-west-1.amazonaws.com  
       POLICYDAXRESOURCE: "arn:aws:dax:us-east-2:677067958011:cache/dax-api-cluster-prod"
@@ -65,7 +68,8 @@ Mappings:
       UPCTABLE: UPC_SKU_MAPPING 
       INVENTORYFUN: InventoryApi-Prod
       DDFUN: DeliveryDateApi-Prod
-      GEOLOCATIONFUN: GeoLocationApi-Prod 
+      GEOLOCATIONFUN: GeoLocationApi-Prod
+      GEOLOCATIONFUNTWO: GeoLocationV2Api-Prod
 Resources:
   AvailableToPromiseFunctionLogGroup:
     Type: "AWS::Logs::LogGroup"
@@ -109,6 +113,11 @@ Resources:
                           - EnvMap
                           - !Ref StageName
                           - GEOLOCATIONFUN
+      - LambdaInvokePolicy:
+          FunctionName: !FindInMap
+                          - EnvMap
+                          - !Ref StageName
+                          - GEOLOCATIONFUNTWO
       VpcConfig:
         SecurityGroupIds: !FindInMap [EnvMap, !Ref StageName, SECURITYGROUPID] 
         SubnetIds:  !FindInMap [EnvMap, !Ref StageName, SUBNETID]
@@ -134,7 +143,7 @@ Resources:
           GEOLOCATIONFUN: !FindInMap
             - EnvMap
             - !Ref StageName
-            - GEOLOCATIONFUN
+            - GEOLOCATIONFUNTWO
           UPCTABLE: !FindInMap
             - EnvMap
             - !Ref StageName

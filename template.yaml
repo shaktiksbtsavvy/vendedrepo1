@@ -143,7 +143,7 @@ Resources:
           GEOLOCATIONFUN: !FindInMap
             - EnvMap
             - !Ref StageName
-            - GEOLOCATIONFUN
+            - GEOLOCATIONFUNTWO
           UPCTABLE: !FindInMap
             - EnvMap
             - !Ref StageName

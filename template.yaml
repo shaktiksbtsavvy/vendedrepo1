@@ -34,6 +34,7 @@ Mappings:
       DDFUN: DeliveryDateApi-SBX
       GEOLOCATIONFUN: GeoLocationApi-SBX
       GEOLOCATIONFUNTWO: GeoLocationV2Api-SBX
+      LOGRETENTIONDAYS: 7
     Dev: 
       DAXENDPOINT: daxs://dax-api-cluster-dev.1stt4v.dax-clusters.us-east-2.amazonaws.com
       POLICYDAXRESOURCE: "arn:aws:dax:us-east-2:476435662168:cache/dax-api-cluster-dev"
@@ -46,6 +47,7 @@ Mappings:
       DDFUN: DeliveryDateApi-Dev
       GEOLOCATIONFUN: GeoLocationApi-Dev
       GEOLOCATIONFUNTWO: GeoLocationV2Api-Dev
+      LOGRETENTIONDAYS: 7
     UAT: 
       DAXENDPOINT: daxs://dax-api-cluster-uat.4o0d6x.dax-clusters.us-east-2.amazonaws.com #daxs://inventorytestcluster.yprieo.dax-clusters.us-west-1.amazonaws.com  
       POLICYDAXRESOURCE: "arn:aws:dax:us-east-2:545738172159:cache/dax-api-cluster-uat"
@@ -58,6 +60,7 @@ Mappings:
       DDFUN: DeliveryDateApi-UAT
       GEOLOCATIONFUN: GeoLocationApi-UAT
       GEOLOCATIONFUNTWO: GeoLocationV2Api-UAT
+      LOGRETENTIONDAYS: 7
     Prod: 
       DAXENDPOINT: daxs://dax-api-cluster-prod.0ll8yb.dax-clusters.us-east-2.amazonaws.com #daxs://inventorytestcluster.yprieo.dax-clusters.us-west-1.amazonaws.com  
       POLICYDAXRESOURCE: "arn:aws:dax:us-east-2:677067958011:cache/dax-api-cluster-prod"
@@ -70,12 +73,13 @@ Mappings:
       DDFUN: DeliveryDateApi-Prod
       GEOLOCATIONFUN: GeoLocationApi-Prod
       GEOLOCATIONFUNTWO: GeoLocationV2Api-Prod
+      LOGRETENTIONDAYS: 30
 Resources:
   AvailableToPromiseFunctionLogGroup:
     Type: "AWS::Logs::LogGroup"
     DependsOn: "AvailableToPromiseFunction"
     Properties: 
-      RetentionInDays: 30
+      RetentionInDays: !FindInMap [EnvMap, !Ref StageName, LOGRETENTIONDAYS]
       LogGroupName: !Join ["", ["/aws/lambda/", !Ref AvailableToPromiseFunction]]
   AvailableToPromiseFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -129,7 +133,7 @@ Resources:
         Variables:
           VERSION: 1.0
           RESTART: 1.0  # Change this value at runtime to force restart
-          LOG_LEVEL: DEBUG
+          LOG_LEVEL: !If [CreatePRODResources, ERROR, DEBUG]
           DISTANCETHRESHOLD: 75
           CLEARANCESTORES: 290,266
           INVENTORYFUN: !FindInMap

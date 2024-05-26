@@ -132,7 +132,7 @@ Resources:
         Variables:
           VERSION: 1.0
           RESTART: 1.0  # Change this value at runtime to force restart
-          LOG_LEVEL: DEBUG
+          LOG_LEVEL: !If [CreatePRODResources, WARN, DEBUG]
           DISTANCETHRESHOLD: 75
           CLEARANCESTORES: 290,266
           INVENTORYFUN: !FindInMap
